@@ -6,3 +6,7 @@ pandas
 
 # Pipeline dependencies
 anthropic
+
+# Dashboard
+streamlit
+plotly
