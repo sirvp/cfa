@@ -198,14 +198,27 @@ def parse_claude_response(raw_text: str) -> dict:
     except json.JSONDecodeError:
         pass
 
-    # Stage 2: regex extraction fallback
+    # Stage 2: find every top-level balanced {...} block and try each in order.
+    # This handles the case where the model outputs two JSON objects separated by
+    # self-correction prose — the greedy \{.*\} approach would merge them.
     if parsed is None:
-        match = re.search(r"\{.*\}", raw_text, re.DOTALL)
-        if match:
-            try:
-                parsed = json.loads(match.group(0))
-            except json.JSONDecodeError:
-                pass
+        i = 0
+        while i < len(raw_text) and parsed is None:
+            if raw_text[i] == "{":
+                depth = 0
+                for j in range(i, len(raw_text)):
+                    if raw_text[j] == "{":
+                        depth += 1
+                    elif raw_text[j] == "}":
+                        depth -= 1
+                        if depth == 0:
+                            try:
+                                parsed = json.loads(raw_text[i : j + 1])
+                            except json.JSONDecodeError:
+                                pass
+                            i = j
+                            break
+            i += 1
 
     if parsed is None:
         raise ValueError(f"Could not extract JSON from response: {raw_text!r}")
