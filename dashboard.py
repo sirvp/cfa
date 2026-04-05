@@ -79,11 +79,38 @@ df = load_data()
 
 st.sidebar.title("⚡ Filters")
 
+# Pill-button CSS — colour selected pill with the brand green
+st.markdown(
+    """
+    <style>
+    /* Selected pill */
+    div[data-testid="stPills"] button[aria-selected="true"] {
+        background-color: #486a14 !important;
+        color: #ffffff !important;
+        border-color: #486a14 !important;
+        font-weight: 600;
+    }
+    /* Unselected pill */
+    div[data-testid="stPills"] button[aria-selected="false"] {
+        background-color: #ffffff;
+        color: #2d2d2d;
+        border-color: #d1d5db;
+    }
+    div[data-testid="stPills"] button[aria-selected="false"]:hover {
+        background-color: #eff3e8;
+        border-color: #486a14;
+        color: #486a14;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 sources = ["All"] + sorted(df["source"].unique().tolist())
-selected_source = st.sidebar.selectbox("Store", sources)
+selected_source = st.sidebar.pills("Store", sources, default="All") or "All"
 
 sentiments = ["All", "positive", "neutral", "negative"]
-selected_sentiment = st.sidebar.selectbox("Sentiment", sentiments)
+selected_sentiment = st.sidebar.pills("Sentiment", sentiments, default="All") or "All"
 
 ratings = ["All"] + [str(r) for r in sorted(df["rating"].dropna().unique().astype(int).tolist())]
 selected_rating = st.sidebar.selectbox("Rating", ratings)
