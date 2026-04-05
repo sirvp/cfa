@@ -1,31 +1,56 @@
 # PLAYSTORE REVIEWS SCRAPER
-# Scrapes reviews from the last x days grom Google PlayStore for the given App in given region, and saves it to a file
+# Scrapes reviews from the last x days from Google PlayStore for the given App in given region, and saves it to a file
+# Uses continuation tokens to paginate until all reviews within the date window are retrieved.
 
-from google_play_scraper import Sort, reviews
+from google_play_scraper import Sort, reviews as get_reviews
 import pandas as pd
 from datetime import datetime, timedelta
 
-period = 180 #Number of days before current date you need reviews for
+period = 180  # Number of days before current date you need reviews for
 start_date = datetime.now() - timedelta(days=period)
 start_date_str = start_date.strftime("%Y-%m-%d")
-result, continuation_token = reviews(
-    'uk.co.scottishpower',
-    lang='en', # defaults to 'en'
-    country='uk', # defaults to 'us'
-    sort=Sort.NEWEST, # defaults to Sort.NEWEST
-    count=500, # defaults to 100
-    filter_score_with=None # defaults to None(means all score)
+
+# Paginate using continuation tokens until the oldest review in a batch
+# predates start_date (meaning we've covered the full window) or no more reviews exist.
+all_results = []
+token = None
+
+while True:
+    batch, token = get_reviews(
+        'uk.co.scottishpower',
+        lang='en',
+        country='uk',
+        sort=Sort.NEWEST,
+        count=200,
+        continuation_token=token,
+        filter_score_with=None
+    )
+
+    if not batch:
+        break
+
+    all_results.extend(batch)
+
+    # Stop once the oldest review in this batch is older than our window
+    oldest_in_batch = min(r['at'] for r in batch)
+    if oldest_in_batch.replace(tzinfo=None) < start_date:
+        break
+
+    if token is None:
+        break
+
+reviews_df = pd.DataFrame(all_results)
+reviews_df['at'] = pd.to_datetime(reviews_df['at']).dt.tz_localize(None)
+
+new_reviews = reviews_df[reviews_df['at'] > start_date]
+new_reviews = new_reviews.drop(
+    ['reviewId', 'userImage', 'thumbsUpCount', 'repliedAt', 'replyContent', 'reviewCreatedVersion'],
+    axis=1
 )
-
-reviews = pd.DataFrame(result)
-reviews['at'] = pd.to_datetime(reviews['at'])
-
-new_reviews = reviews[reviews['at'] > start_date]
-new_reviews = new_reviews.drop(['reviewId', 'userImage', 'thumbsUpCount', 'repliedAt', 'replyContent', 'reviewCreatedVersion'], axis=1)
 new_reviews['Source'] = 'PlayStore'
 new_reviews['at'] = new_reviews['at'].dt.strftime('%Y-%m-%dT%H:%M:%S')
 
 json_file = f"Reviews/ScottishPower_Playstore_Reviews_{start_date_str}_{period}days.json"
 new_reviews.to_json(json_file, orient='records', indent=2)
 
-print("Reviews saved to ", json_file)
+print(f"Reviews saved to {json_file} ({len(new_reviews)} reviews)")
