@@ -1,0 +1,70 @@
+name: Daily Review Pipeline
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # 06:00 UTC every day
+  workflow_dispatch:        # also runnable manually from the GitHub Actions tab
+
+permissions:
+  contents: write           # needed to commit + push the updated CSV
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 2. Python ──────────────────────────────────────────────────────────
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # ── 3. Restore reviews.db from cache ──────────────────────────────────
+      # The DB holds the ingestion cursors and all processed insights.
+      # Caching it means only *new* reviews are ingested and analysed each day,
+      # keeping API costs minimal. The cache key rotates each run; restore-keys
+      # falls back to the most recent previous cache if no exact match exists.
+      - name: Restore reviews.db cache
+        uses: actions/cache@v4
+        with:
+          path: reviews.db
+          key: reviews-db-${{ github.run_id }}
+          restore-keys: |
+            reviews-db-
+
+      # ── 4. Dependencies ────────────────────────────────────────────────────
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # ── 5. Pre-flight ──────────────────────────────────────────────────────
+      - name: Create required directories
+        run: |
+          mkdir -p Reviews
+          mkdir -p data
+          mkdir -p logs
+
+      - name: Configure git identity for CSV commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # ── 6. Run pipeline ────────────────────────────────────────────────────
+      - name: Run pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python run_pipeline.py
+
+      # ── 7. Upload logs as artifact (retained for 30 days) ─────────────────
+      - name: Upload pipeline log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-log-${{ github.run_id }}
+          path: logs/
+          retention-days: 30
