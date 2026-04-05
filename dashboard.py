@@ -6,16 +6,20 @@ Run with:
 """
 
 import json
+import os
 import sqlite3
-from collections import Counter
-from datetime import datetime
 
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from config import DB_PATH, TOPICS
+DB_PATH = "reviews.db"
+CSV_PATH = "data/reviews_analysed.csv"
+TOPICS = [
+    "login", "billing", "app_crash", "smart_meter",
+    "customer_service", "outage", "account", "other",
+]
 
 # ---------------------------------------------------------------------------
 # Page config
@@ -34,22 +38,23 @@ st.set_page_config(
 
 @st.cache_data(ttl=60)
 def load_data():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-
-    reviews = pd.read_sql_query(
-        """
-        SELECT r.review_id, r.source, r.author, r.rating, r.body,
-               r.app_version, r.date_posted,
-               i.topics, i.sentiment, i.insight
-        FROM raw_reviews r
-        LEFT JOIN insights i USING (review_id, source)
-        WHERE r.is_processed = 1
-        ORDER BY r.date_posted DESC
-        """,
-        conn,
-    )
-    conn.close()
+    if os.path.exists(DB_PATH):
+        conn = sqlite3.connect(DB_PATH)
+        reviews = pd.read_sql_query(
+            """
+            SELECT r.review_id, r.source, r.author, r.rating, r.body,
+                   r.app_version, r.date_posted,
+                   i.topics, i.sentiment, i.insight
+            FROM raw_reviews r
+            LEFT JOIN insights i USING (review_id, source)
+            WHERE r.is_processed = 1
+            ORDER BY r.date_posted DESC
+            """,
+            conn,
+        )
+        conn.close()
+    else:
+        reviews = pd.read_csv(CSV_PATH)
 
     reviews["date_posted"] = pd.to_datetime(reviews["date_posted"])
     reviews["date"] = reviews["date_posted"].dt.date
