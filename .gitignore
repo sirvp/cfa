@@ -1,0 +1,21 @@
+# Claude Code local settings (may contain secrets)
+.claude/
+
+# Database
+reviews.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+*.env
+
+# OS
+.DS_Store
+Thumbs.db

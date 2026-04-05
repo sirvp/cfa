@@ -1,0 +1,8 @@
+# Scraper dependencies (existing)
+requests
+beautifulsoup4
+google-play-scraper
+pandas
+
+# Pipeline dependencies
+anthropic
