@@ -185,7 +185,7 @@ def build_summary_prompt(current: dict, prior: dict, current_range: str, prior_r
             lines.append(f"    - {ins}")
         return "\n".join(lines)
 
-    return f"""You are an analyst for the ScottishPower digital team. Write a concise executive summary of app review data.
+    return f"""You are an analyst for the ScottishPower digital team. Summarise app review data in 4 lines maximum.
 
 CURRENT PERIOD ({current_range}):
 {fmt(current)}
@@ -193,14 +193,13 @@ CURRENT PERIOD ({current_range}):
 PRIOR PERIOD ({prior_range}):
 {fmt(prior)}
 
-Write the summary in this structure:
-1. **Overview** — 2–3 sentences on overall volume, sentiment, and average rating vs prior period.
-2. **Top topics** — for the 3–4 most-mentioned topics, describe what users are saying and whether sentiment is positive or negative.
-3. **Key issues** — bullet list of the most significant problems users raised, with specific detail from the insights.
-4. **Notable changes** — what has improved or worsened compared to the prior period. Be specific about which topics shifted.
-5. **Recommendation** — one or two actionable priorities for the product/support team.
+Respond with exactly this format — no headers, no bullet points, no extra lines:
+Line 1: One sentence on volume, avg rating, and sentiment split vs prior period (use numbers).
+Line 2: Top 2 issues with mention counts, e.g. "Login (110): auth failures requiring reinstall. Billing (85): overcharging and standing charge disputes."
+Line 3: One sentence on the single biggest change vs prior period.
+Line 4: One actionable recommendation for the product team.
 
-Be direct and specific. Use concrete numbers from the data. Do not pad with generic statements."""
+Be terse. No padding. Numbers only where meaningful."""
 
 
 def get_api_key() -> str:
@@ -260,7 +259,7 @@ else:
             full_text = ""
             with client.messages.stream(
                 model="claude-haiku-4-5-20251001",
-                max_tokens=1024,
+                max_tokens=256,
                 messages=[{"role": "user", "content": prompt}],
             ) as stream:
                 for text in stream.text_stream:
