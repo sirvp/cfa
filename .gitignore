@@ -19,3 +19,9 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# Pipeline logs (local only)
+logs/
+
+# Batch script contains API key — never commit
+run_daily.bat
