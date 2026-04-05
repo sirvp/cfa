@@ -303,7 +303,15 @@ def render_summary_card(data: dict) -> None:
             unsafe_allow_html=True,
         )
 
-    PILL_COLOURS = ["#9d131f", "#c0392b", "#e67e22"]
+    # Derive colour scheme from the negative % in the snapshot string
+    import re as _re2
+    _neg_match = _re2.search(r"(\d+)%\s*negative", data.get("snapshot", ""))
+    _neg_pct = int(_neg_match.group(1)) if _neg_match else 50
+    PILL_COLOURS = (
+        ["#166534", "#15803d", "#16a34a"]   # greens — positive-leaning period
+        if _neg_pct < 25
+        else ["#9d131f", "#c0392b", "#e67e22"]  # reds/amber — negative-leaning
+    )
     issues = data.get("top_issues", [])
     pills_html = "<div style='display:flex;gap:8px;flex-wrap:wrap;margin:10px 0'>"
     for i, issue in enumerate(issues):
