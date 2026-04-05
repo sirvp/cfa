@@ -141,7 +141,40 @@ if len(date_range) == 2:
 # Header
 # ---------------------------------------------------------------------------
 
-st.title("Acorn — Customer Insights")
+ACORN_SVG = """
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 96" width="54" height="54">
+  <!-- Stem -->
+  <path d="M40 4 C43 4 47 8 44 17" stroke="#4a2c0a" stroke-width="3.5"
+        fill="none" stroke-linecap="round"/>
+  <!-- Cap depth shadow -->
+  <ellipse cx="40" cy="42" rx="30" ry="14" fill="#2d4a0a" opacity="0.25"/>
+  <!-- Cap body -->
+  <ellipse cx="40" cy="39" rx="30" ry="14" fill="#486a14"/>
+  <!-- Cap hatching texture -->
+  <path d="M14 36 Q28 30 40 31 Q52 30 66 36" stroke="#6a9c20" stroke-width="1.2" fill="none" opacity="0.7"/>
+  <path d="M12 40 Q26 34 40 35 Q54 34 68 40" stroke="#6a9c20" stroke-width="1.2" fill="none" opacity="0.7"/>
+  <path d="M15 44 Q29 38 40 39 Q51 38 65 44" stroke="#6a9c20" stroke-width="1.2" fill="none" opacity="0.6"/>
+  <!-- Nut body -->
+  <path d="M13 47 Q9 70 40 92 Q71 70 67 47 Z" fill="#b8721f"/>
+  <!-- Nut highlight -->
+  <path d="M21 54 Q19 70 34 84" stroke="#d9962e" stroke-width="7"
+        fill="none" stroke-linecap="round" opacity="0.35"/>
+  <!-- Cap-to-nut seam -->
+  <path d="M13 47 Q40 52 67 47" stroke="#7a3c10" stroke-width="1.5" fill="none" opacity="0.45"/>
+</svg>
+"""
+
+st.markdown(
+    f"""
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:2px">
+      {ACORN_SVG}
+      <span style="font-size:2.1rem;font-weight:700;color:#2d2d2d;letter-spacing:-0.5px">
+        Acorn &mdash; Customer Insights
+      </span>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 st.caption(f"Data from {min_date} to {max_date} · {len(df)} total reviews analysed")
 
 # ---------------------------------------------------------------------------
