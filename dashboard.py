@@ -462,14 +462,13 @@ st.divider()
 
 st.subheader(f"Reviews ({total:,})")
 
-display_cols = ["date_posted", "source", "rating", "sentiment", "topics_list", "insight", "body"]
+display_cols = ["date_posted", "source", "rating", "sentiment", "topics_list", "body"]
 table = filtered[display_cols].rename(columns={
     "date_posted": "Date",
     "source": "Store",
     "rating": "★",
     "sentiment": "Sentiment",
     "topics_list": "Topics",
-    "insight": "AI Insight",
     "body": "Review",
 })
 table["Date"] = table["Date"].dt.strftime("%Y-%m-%d")
@@ -482,7 +481,6 @@ st.dataframe(
     column_config={
         "★": st.column_config.NumberColumn(format="%d ★"),
         "Review": st.column_config.TextColumn(width="large"),
-        "AI Insight": st.column_config.TextColumn(width="large"),
     },
 )
 
