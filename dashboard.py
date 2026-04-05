@@ -479,3 +479,6 @@ st.dataframe(
         "AI Insight": st.column_config.TextColumn(width="large"),
     },
 )
+
+st.divider()
+st.markdown("<p style='text-align:center; color:gray; font-size:0.85rem;'>Made by Vishnu Prasad</p>", unsafe_allow_html=True)
