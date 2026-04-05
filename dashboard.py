@@ -34,55 +34,8 @@ st.set_page_config(
     layout="wide",
 )
 
-# ---------------------------------------------------------------------------
-# Brand styling — extracted from ScottishPower index.css
-# Colour tokens:
-#   --primary-1: #334b0e  --primary-2: #486a14  --primary-3: #5c881a
-#   --bg-light:  #eff3e8  --text: #2d2d2d  --subtle: #5f6971
-#   --border:    #d7d9db  --error: #9d131f
-# Font: Lato (400/700) via Google Fonts
-# ---------------------------------------------------------------------------
-
-st.markdown(
-    """
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      /* Font */
-      html, body { font-family: Lato, Roboto, Helvetica, Arial, sans-serif !important; }
-
-      /* Sidebar */
-      [data-testid="stSidebar"] { background-color: #eff3e8; border-right: 1px solid #d7d9db; }
-
-      /* Headings */
-      h1 { color: #334b0e !important; font-weight: 700 !important; }
-      h2 { color: #486a14 !important; font-weight: 700 !important; }
-      h3 { color: #486a14 !important; font-weight: 700 !important; }
-
-      /* Metric cards */
-      [data-testid="stMetric"] { background-color: #eff3e8; border: 1px solid #d7d9db; border-radius: 4px; padding: 0.75rem 1rem; }
-      [data-testid="stMetricLabel"] { color: #5f6971 !important; }
-      [data-testid="stMetricValue"] { color: #334b0e !important; font-weight: 700 !important; }
-      [data-testid="stMetricDelta"] { color: #5c881a !important; }
-
-      /* Primary button */
-      [data-testid="baseButton-primary"] { background-color: #486a14 !important; color: #ffffff !important; border: none !important; border-radius: 4px !important; font-weight: 700 !important; }
-      [data-testid="baseButton-primary"]:hover { background-color: #5c881a !important; }
-
-      /* Divider */
-      hr { border-color: #d7d9db !important; }
-
-      /* Caption */
-      [data-testid="stCaptionContainer"] p { color: #5f6971 !important; }
-
-      /* Info boxes */
-      [data-testid="stAlert"] { border-left: 4px solid #486a14 !important; background-color: #eff3e8 !important; }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# Brand colours and font are set via .streamlit/config.toml
+# primaryColor=#486a14  backgroundColor=#ffffff  secondaryBackgroundColor=#eff3e8  textColor=#2d2d2d
 
 # ---------------------------------------------------------------------------
 # Data loading
