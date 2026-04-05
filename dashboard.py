@@ -171,6 +171,7 @@ def period_stats(frame: pd.DataFrame) -> dict:
 
 
 def build_summary_prompt(current: dict, prior: dict, current_range: str, prior_range: str) -> str:
+    """Build the prompt for the AI executive summary, requesting structured JSON output."""
     def fmt(stats: dict) -> str:
         if not stats:
             return "  No data available."
@@ -185,7 +186,7 @@ def build_summary_prompt(current: dict, prior: dict, current_range: str, prior_r
             lines.append(f"    - {ins}")
         return "\n".join(lines)
 
-    return f"""You are an analyst for the ScottishPower digital team. Summarise app review data in 4 lines maximum.
+    return f"""You are an analyst for the ScottishPower digital team. Return ONLY a JSON object — no prose, no markdown fences.
 
 CURRENT PERIOD ({current_range}):
 {fmt(current)}
@@ -193,13 +194,20 @@ CURRENT PERIOD ({current_range}):
 PRIOR PERIOD ({prior_range}):
 {fmt(prior)}
 
-Respond with exactly this format — no headers, no bullet points, no extra lines:
-Line 1: One sentence on volume, avg rating, and sentiment split vs prior period (use numbers).
-Line 2: Top 2 issues with mention counts, e.g. "Login (110): auth failures requiring reinstall. Billing (85): overcharging and standing charge disputes."
-Line 3: One sentence on the single biggest change vs prior period.
-Line 4: One actionable recommendation for the product team.
+Return exactly this JSON shape:
+{{
+  "snapshot": "X reviews · Y★ avg · Z% negative",
+  "vs_prior": "one short phrase on volume/sentiment change vs prior, e.g. +145% volume, negative up 24%→63%",
+  "top_issues": [
+    {{"topic": "Login", "count": 110, "detail": "max 8 words on what users say"}},
+    {{"topic": "Billing", "count": 85, "detail": "max 8 words on what users say"}},
+    {{"topic": "App Crash", "count": 81, "detail": "max 8 words on what users say"}}
+  ],
+  "key_change": "one sentence on the single most significant shift vs prior period",
+  "recommendation": "one actionable sentence for the product team"
+}}
 
-Be terse. No padding. Numbers only where meaningful."""
+Include the top 3 topics by mention count. Keep all strings terse."""
 
 
 def get_api_key() -> str:
@@ -255,17 +263,65 @@ else:
 
         client = anthropic.Anthropic(api_key=api_key)
         with st.spinner("Generating summary…"):
-            summary_placeholder = st.empty()
-            full_text = ""
-            with client.messages.stream(
+            msg = client.messages.create(
                 model="claude-haiku-4-5-20251001",
-                max_tokens=256,
+                max_tokens=400,
                 messages=[{"role": "user", "content": prompt}],
-            ) as stream:
-                for text in stream.text_stream:
-                    full_text += text
-                    summary_placeholder.markdown(full_text + "▌")
-            summary_placeholder.markdown(full_text)
+            )
+            raw = msg.content[0].text.strip()
+
+        # Parse JSON — strip markdown fences if present
+        import re as _re
+        _match = _re.search(r"\{.*\}", raw, _re.DOTALL)
+        try:
+            data = json.loads(_match.group(0) if _match else raw)
+        except Exception:
+            st.markdown(raw)
+        else:
+            # ── Snapshot bar ─────────────────────────────────────
+            snap_col, change_col = st.columns([3, 2])
+            with snap_col:
+                st.markdown(
+                    f"<div style='font-size:1.1rem;font-weight:700;color:#2d2d2d'>{data.get('snapshot','')}</div>",
+                    unsafe_allow_html=True,
+                )
+            with change_col:
+                st.markdown(
+                    f"<div style='font-size:0.85rem;color:#5f6971;text-align:right;padding-top:4px'>{data.get('vs_prior','')}</div>",
+                    unsafe_allow_html=True,
+                )
+
+            # ── Topic pills ───────────────────────────────────────
+            PILL_COLOURS = ["#9d131f", "#c0392b", "#e67e22"]  # red shades for issues
+            issues = data.get("top_issues", [])
+            pills_html = "<div style='display:flex;gap:8px;flex-wrap:wrap;margin:10px 0'>"
+            for i, issue in enumerate(issues):
+                bg = PILL_COLOURS[i % len(PILL_COLOURS)]
+                pills_html += (
+                    f"<div style='background:{bg};color:#fff;border-radius:4px;"
+                    f"padding:6px 12px;font-size:0.82rem;line-height:1.3'>"
+                    f"<strong>{issue.get('topic','')} ({issue.get('count','')})</strong>"
+                    f"<br>{issue.get('detail','')}</div>"
+                )
+            pills_html += "</div>"
+            st.markdown(pills_html, unsafe_allow_html=True)
+
+            # ── Key change + recommendation ───────────────────────
+            left, right = st.columns(2)
+            with left:
+                st.markdown(
+                    f"<div style='background:#fff3cd;border-left:4px solid #e6a817;"
+                    f"border-radius:4px;padding:10px 14px;font-size:0.85rem;color:#2d2d2d'>"
+                    f"⚠️ <strong>Key change</strong><br>{data.get('key_change','')}</div>",
+                    unsafe_allow_html=True,
+                )
+            with right:
+                st.markdown(
+                    f"<div style='background:#eff3e8;border-left:4px solid #486a14;"
+                    f"border-radius:4px;padding:10px 14px;font-size:0.85rem;color:#2d2d2d'>"
+                    f"💡 <strong>Recommendation</strong><br>{data.get('recommendation','')}</div>",
+                    unsafe_allow_html=True,
+                )
 
 st.divider()
 
