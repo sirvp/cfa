@@ -114,7 +114,7 @@ if len(date_range) == 2:
 # Header
 # ---------------------------------------------------------------------------
 
-st.title("⚡ ScottishPower App — Review Intelligence")
+st.title("Acorn — Customer Insights")
 st.caption(f"Data from {min_date} to {max_date} · {len(df)} total reviews analysed")
 
 # ---------------------------------------------------------------------------
@@ -129,8 +129,24 @@ pos_pct = (positive / total * 100) if total else 0
 
 k1, k2, k3, k4, k5 = st.columns(5)
 k1.metric("Total Reviews", f"{total:,}")
-k2.metric("Positive", f"{positive:,}", f"{pos_pct:.0f}%")
-k3.metric("Negative", f"{negative:,}", f"{(negative/total*100):.0f}%" if total else "0%")
+
+neg_pct = (negative / total * 100) if total else 0
+k2.markdown(
+    f"<div style='background:#eff3e8;border:1px solid #d7d9db;border-radius:4px;padding:0.75rem 1rem'>"
+    f"<div style='font-size:0.8rem;color:#5f6971'>Positive</div>"
+    f"<div style='font-size:1.95rem;font-weight:700;color:#16a34a'>{positive:,}</div>"
+    f"<div style='font-size:0.8rem;color:#16a34a'>↑ {pos_pct:.0f}%</div>"
+    f"</div>",
+    unsafe_allow_html=True,
+)
+k3.markdown(
+    f"<div style='background:#eff3e8;border:1px solid #d7d9db;border-radius:4px;padding:0.75rem 1rem'>"
+    f"<div style='font-size:0.8rem;color:#5f6971'>Negative</div>"
+    f"<div style='font-size:1.95rem;font-weight:700;color:#dc2626'>{negative:,}</div>"
+    f"<div style='font-size:0.8rem;color:#dc2626'>↑ {neg_pct:.0f}%</div>"
+    f"</div>",
+    unsafe_allow_html=True,
+)
 k4.metric("Avg Rating", f"{avg_rating:.2f} ★" if not pd.isna(avg_rating) else "—")
 k5.metric("Unanalysed", f"{len(df) - len(df.dropna(subset=['sentiment'])):,}")
 
