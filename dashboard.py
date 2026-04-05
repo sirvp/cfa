@@ -132,19 +132,15 @@ k1.metric("Total Reviews", f"{total:,}")
 
 neg_pct = (negative / total * 100) if total else 0
 k2.markdown(
-    f"<div style='background:#eff3e8;border:1px solid #d7d9db;border-radius:4px;padding:0.75rem 1rem'>"
-    f"<div style='font-size:0.8rem;color:#5f6971'>Positive</div>"
-    f"<div style='font-size:1.95rem;font-weight:700;color:#16a34a'>{positive:,}</div>"
-    f"<div style='font-size:0.8rem;color:#16a34a'>↑ {pos_pct:.0f}%</div>"
-    f"</div>",
+    f"<p style='font-size:0.875rem;color:#5f6971;margin:0'>Positive</p>"
+    f"<p style='font-size:1.95rem;font-weight:700;color:#16a34a;margin:0;line-height:1.2'>{positive:,}</p>"
+    f"<p style='font-size:0.8rem;color:#16a34a;margin:0'>↑ {pos_pct:.0f}%</p>",
     unsafe_allow_html=True,
 )
 k3.markdown(
-    f"<div style='background:#eff3e8;border:1px solid #d7d9db;border-radius:4px;padding:0.75rem 1rem'>"
-    f"<div style='font-size:0.8rem;color:#5f6971'>Negative</div>"
-    f"<div style='font-size:1.95rem;font-weight:700;color:#dc2626'>{negative:,}</div>"
-    f"<div style='font-size:0.8rem;color:#dc2626'>↑ {neg_pct:.0f}%</div>"
-    f"</div>",
+    f"<p style='font-size:0.875rem;color:#5f6971;margin:0'>Negative</p>"
+    f"<p style='font-size:1.95rem;font-weight:700;color:#dc2626;margin:0;line-height:1.2'>{negative:,}</p>"
+    f"<p style='font-size:0.8rem;color:#dc2626;margin:0'>↑ {neg_pct:.0f}%</p>",
     unsafe_allow_html=True,
 )
 k4.metric("Avg Rating", f"{avg_rating:.2f} ★" if not pd.isna(avg_rating) else "—")
