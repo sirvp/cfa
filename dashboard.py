@@ -442,11 +442,11 @@ with col4:
             "PlayStore": "#8b5cf6",
             "Trustpilot": "#00b67a",
         }
+        colours = [colour_map.get(s, "#94a3b8") for s in source_counts.index]
         fig = px.pie(
             values=source_counts.values,
             names=source_counts.index,
-            color=source_counts.index,
-            color_discrete_map=colour_map,
+            color_discrete_sequence=colours,
             hole=0.45,
         )
         fig.update_layout(margin=dict(t=10, b=0), height=350, legend=dict(orientation="h", y=-0.1))
