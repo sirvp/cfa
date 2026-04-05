@@ -164,16 +164,12 @@ ACORN_SVG = """
 </svg>
 """
 
-st.markdown(
-    f"""
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:2px">
-      {ACORN_SVG}
-      <span style="font-size:2.1rem;font-weight:700;color:#2d2d2d;letter-spacing:-0.5px">
-        Acorn &mdash; Customer Insights
-      </span>
-    </div>
-    """,
-    unsafe_allow_html=True,
+st.html(
+    f'<div style="display:flex;align-items:center;gap:14px;margin-bottom:2px">'
+    f'{ACORN_SVG}'
+    f'<span style="font-size:2.1rem;font-weight:700;color:#2d2d2d;letter-spacing:-0.5px">'
+    f'Acorn &mdash; Customer Insights'
+    f'</span></div>'
 )
 st.caption(f"Data from {min_date} to {max_date} · {len(df)} total reviews analysed")
 
