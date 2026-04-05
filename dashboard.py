@@ -8,7 +8,10 @@ Run with:
 import json
 import os
 import sqlite3
+from collections import Counter
+from datetime import timedelta
 
+import anthropic
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -130,6 +133,141 @@ k5.metric("Unanalysed", f"{len(df) - len(df.dropna(subset=['sentiment'])):,}")
 st.divider()
 
 # ---------------------------------------------------------------------------
+# Executive Summary
+# ---------------------------------------------------------------------------
+
+
+def period_stats(frame: pd.DataFrame) -> dict:
+    """Compute aggregated stats for a slice of reviews."""
+    if frame.empty:
+        return {}
+
+    topic_counts: Counter = Counter()
+    topic_sentiment: dict[str, Counter] = {t: Counter() for t in TOPICS}
+    for _, row in frame.iterrows():
+        for t in row["topics_list"]:
+            topic_counts[t] += 1
+            if row["sentiment"]:
+                topic_sentiment.get(t, Counter())[row["sentiment"]] += 1
+
+    sentiment_counts = frame["sentiment"].value_counts().to_dict()
+    avg_r = frame["rating"].mean()
+
+    # Sample up to 30 insights — prioritise negative ones for richer signal
+    neg = frame[frame["sentiment"] == "negative"]["insight"].dropna().tolist()
+    pos = frame[frame["sentiment"] == "positive"]["insight"].dropna().tolist()
+    sample_insights = (neg[:20] + pos[:10])[:30]
+
+    return {
+        "total": len(frame),
+        "avg_rating": round(float(avg_r), 2) if not pd.isna(avg_r) else None,
+        "sentiment": sentiment_counts,
+        "topics": dict(topic_counts.most_common()),
+        "sample_insights": sample_insights,
+    }
+
+
+def build_summary_prompt(current: dict, prior: dict, current_range: str, prior_range: str) -> str:
+    def fmt(stats: dict) -> str:
+        if not stats:
+            return "  No data available."
+        lines = [
+            f"  Reviews: {stats['total']}",
+            f"  Avg rating: {stats['avg_rating'] or 'N/A'}",
+            f"  Sentiment: {stats['sentiment']}",
+            f"  Topics (by mention count): {stats['topics']}",
+            f"  Sample insights (up to 30):",
+        ]
+        for ins in stats.get("sample_insights", []):
+            lines.append(f"    - {ins}")
+        return "\n".join(lines)
+
+    return f"""You are an analyst for the ScottishPower digital team. Write a concise executive summary of app review data.
+
+CURRENT PERIOD ({current_range}):
+{fmt(current)}
+
+PRIOR PERIOD ({prior_range}):
+{fmt(prior)}
+
+Write the summary in this structure:
+1. **Overview** — 2–3 sentences on overall volume, sentiment, and average rating vs prior period.
+2. **Top topics** — for the 3–4 most-mentioned topics, describe what users are saying and whether sentiment is positive or negative.
+3. **Key issues** — bullet list of the most significant problems users raised, with specific detail from the insights.
+4. **Notable changes** — what has improved or worsened compared to the prior period. Be specific about which topics shifted.
+5. **Recommendation** — one or two actionable priorities for the product/support team.
+
+Be direct and specific. Use concrete numbers from the data. Do not pad with generic statements."""
+
+
+def get_api_key() -> str:
+    # Streamlit Cloud secrets take priority, then environment variable
+    try:
+        return st.secrets["ANTHROPIC_API_KEY"]
+    except (KeyError, FileNotFoundError):
+        return os.environ.get("ANTHROPIC_API_KEY", "")
+
+
+st.subheader("Executive Summary")
+
+# Derive the prior period (same length, immediately before the selected range)
+if len(date_range) == 2:
+    sel_start, sel_end = date_range
+    period_days = (sel_end - sel_start).days or 1
+    prior_end = sel_start - timedelta(days=1)
+    prior_start = prior_end - timedelta(days=period_days - 1)
+    current_range_str = f"{sel_start} to {sel_end}"
+    prior_range_str = f"{prior_start} to {prior_end}"
+
+    prior_slice = df[
+        (df["date"].astype(str) >= str(prior_start)) &
+        (df["date"].astype(str) <= str(prior_end))
+    ]
+    # Apply same non-date filters to prior slice
+    if selected_source != "All":
+        prior_slice = prior_slice[prior_slice["source"] == selected_source]
+    if selected_topics:
+        prior_slice = prior_slice[prior_slice["topics_list"].apply(
+            lambda t: any(topic in t for topic in selected_topics)
+        )]
+else:
+    current_range_str = "selected period"
+    prior_range_str = "prior period"
+    prior_slice = pd.DataFrame()
+
+api_key = get_api_key()
+
+if not api_key:
+    st.info("Set `ANTHROPIC_API_KEY` in your environment or Streamlit secrets to enable AI summaries.")
+elif total == 0:
+    st.info("No reviews in the selected date range.")
+else:
+    st.caption(
+        f"Comparing **{current_range_str}** ({total} reviews) "
+        f"against prior period **{prior_range_str}** ({len(prior_slice)} reviews)"
+    )
+    if st.button("Generate Executive Summary", type="primary"):
+        current_stats = period_stats(filtered)
+        prior_stats = period_stats(prior_slice)
+        prompt = build_summary_prompt(current_stats, prior_stats, current_range_str, prior_range_str)
+
+        client = anthropic.Anthropic(api_key=api_key)
+        with st.spinner("Generating summary…"):
+            summary_placeholder = st.empty()
+            full_text = ""
+            with client.messages.stream(
+                model="claude-haiku-4-5-20251001",
+                max_tokens=1024,
+                messages=[{"role": "user", "content": prompt}],
+            ) as stream:
+                for text in stream.text_stream:
+                    full_text += text
+                    summary_placeholder.markdown(full_text + "▌")
+            summary_placeholder.markdown(full_text)
+
+st.divider()
+
+# ---------------------------------------------------------------------------
 # Row 1: Sentiment over time | Rating distribution
 # ---------------------------------------------------------------------------
 
@@ -234,7 +372,6 @@ st.divider()
 
 st.subheader(f"Reviews ({total:,})")
 
-# Display columns
 display_cols = ["date_posted", "source", "rating", "sentiment", "topics_list", "insight", "body"]
 table = filtered[display_cols].rename(columns={
     "date_posted": "Date",
