@@ -131,6 +131,11 @@
     grid-template-columns: 1fr 1fr;
     gap: 16px;
   }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
   .four-col {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -323,7 +328,7 @@
   <div class="header">
     <div class="header-left">
       <h1>⚡ ScottishPower Review Intelligence — System Architecture</h1>
-      <p>End-to-end pipeline: App Store &amp; Play Store → AI Analysis → Live Dashboard</p>
+      <p>End-to-end pipeline: App Store, Play Store &amp; Trustpilot → AI Analysis → Live Dashboard</p>
     </div>
     <div class="badge-group">
       <span class="badge badge-green">🕐 Built in ~6 Hours</span>
@@ -347,8 +352,8 @@
   <!-- ══ LAYER 1: DATA SOURCES ════════════════════════════════════════ -->
   <div class="layer">
     <div class="layer-num">Layer 1 — Data Sources</div>
-    <div class="layer-title"><span>🌐</span> External App Stores</div>
-    <div class="two-col">
+    <div class="layer-title"><span>🌐</span> External Review Platforms</div>
+    <div class="three-col">
       <div class="subcard subcard-blue">
         <h4>Apple App Store (iOS)</h4>
         <ul class="bullet-list">
@@ -367,6 +372,15 @@
           <li>Filtered to <span class="hl-teal">last 180 days</span> — UK region</li>
         </ul>
       </div>
+      <div class="subcard subcard-amber">
+        <h4>Trustpilot</h4>
+        <ul class="bullet-list">
+          <li>Web scrape: <code>trustpilot.com/review/www.scottishpower.co.uk</code></li>
+          <li>Paginated review pages; public, no auth required</li>
+          <li>Filtered to <span class="hl-amber">last 180 days</span></li>
+          <li>Captures: star rating, review body, date, author</li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -376,7 +390,7 @@
   <div class="layer">
     <div class="layer-num">Layer 2 — Scrapers</div>
     <div class="layer-title"><span>🕸️</span> Data Collection Scripts</div>
-    <div class="two-col">
+    <div class="three-col">
       <div class="subcard">
         <h4>AppStoreScraper_JSON.py</h4>
         <ul class="bullet-list">
@@ -393,6 +407,15 @@
           <li>Normalises field names, fills missing content with empty strings</li>
           <li>Converts all dates to ISO format before writing</li>
           <li>Output: <code>Reviews/ScottishPower_Playstore_Reviews_YYYY-MM-DD.json</code></li>
+        </ul>
+      </div>
+      <div class="subcard subcard-amber">
+        <h4>TrustpilotScraper_JSON.py</h4>
+        <ul class="bullet-list">
+          <li>Paginates HTML review pages with BeautifulSoup</li>
+          <li>Stops early once reviews pre-date the 180-day window</li>
+          <li>Normalises star ratings (1–5) from Trustpilot score classes</li>
+          <li>Output: <code>Reviews/ScottishPower_Trustpilot_Reviews_YYYY-MM-DD.json</code></li>
         </ul>
       </div>
     </div>
@@ -480,36 +503,9 @@
 
   <div class="connector-row"><div class="arrow-down"></div></div>
 
-  <!-- ══ LAYER 5: ANOMALY DETECTION ══════════════════════════════════ -->
-  <div class="layer" style="border-color:#f5cfaa;">
-    <div class="layer-num" style="background:#e07a00;">Layer 5 — Anomaly Detection</div>
-    <div class="layer-title" style="color:#7a3a00;"><span>🔔</span> detect_anomalies.py — Volume Spike Alerts</div>
-    <div class="two-col-narrow">
-      <div class="subcard subcard-amber">
-        <h4>Detection Algorithm</h4>
-        <ul class="bullet-list">
-          <li>For each topic (per source): compute <span class="hl-amber">7-day rolling hourly average</span> using SQLite <code>json_each()</code></li>
-          <li>Get last-60-minute count</li>
-          <li>Flag if: <code>last_hour &gt; 2 × 7-day_avg</code></li>
-          <li>Suppressed when <code>avg = 0</code> (prevents false alarms on brand-new topics)</li>
-        </ul>
-      </div>
-      <div class="subcard subcard-amber">
-        <h4>Alerting Outputs</h4>
-        <ul class="bullet-list">
-          <li>Logs anomaly to <code>anomaly_log</code> DB table (append-only)</li>
-          <li>Prints formatted report to console / log file</li>
-          <li>Optional: Slack webhook notification (enabled via <code>SLACK_WEBHOOK_URL</code> env var)</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="connector-row"><div class="arrow-down"></div></div>
-
-  <!-- ══ LAYER 6: PUBLISH ═════════════════════════════════════════════ -->
+  <!-- ══ LAYER 5: PUBLISH ═════════════════════════════════════════════ -->
   <div class="layer">
-    <div class="layer-num">Layer 6 — Publish &amp; Export</div>
+    <div class="layer-num">Layer 5 — Publish &amp; Export</div>
     <div class="layer-title"><span>🚀</span> run_pipeline.py — Export CSV → Git Commit → Push to GitHub</div>
     <div class="two-col">
       <div class="subcard">
@@ -533,9 +529,9 @@
 
   <div class="connector-row"><div class="arrow-down"></div></div>
 
-  <!-- ══ LAYER 7: DASHBOARD ═══════════════════════════════════════════ -->
+  <!-- ══ LAYER 6: DASHBOARD ═══════════════════════════════════════════ -->
   <div class="layer">
-    <div class="layer-num">Layer 7 — Live Dashboard</div>
+    <div class="layer-num">Layer 6 — Live Dashboard</div>
     <div class="layer-title"><span>📊</span> dashboard.py — Interactive Streamlit Web Application</div>
     <div class="four-col">
       <div class="subcard">
@@ -587,7 +583,7 @@
   <!-- ══ DATABASE SCHEMA ══════════════════════════════════════════════ -->
   <div class="db-layer">
     <div class="layer-num">Data Layer — SQLite Database (reviews.db)</div>
-    <div class="layer-title" style="color:#1a3f6e;"><span>🗄️</span> Four Tables — Persistent Local Store</div>
+    <div class="layer-title" style="color:#1a3f6e;"><span>🗄️</span> Three Tables — Persistent Local Store</div>
     <table class="db-table">
       <thead>
         <tr>
@@ -612,11 +608,6 @@
           <td><code>source (PK), last_fetched_date</code></td>
           <td>Tracks the high-water mark per source to enable incremental ingestion on future runs</td>
         </tr>
-        <tr>
-          <td><code>anomaly_log</code></td>
-          <td><code>id, topic, source, current_count, expected_avg, detected_at</code></td>
-          <td>Append-only record of every spike detection event across all pipeline runs</td>
-        </tr>
       </tbody>
     </table>
   </div>
@@ -629,12 +620,12 @@
     <div class="layer-title"><span>🏗️</span> MVP Scope — Everything Designed, Built &amp; Deployed from Scratch</div>
     <div class="four-col mt12">
       <div class="subcard">
-        <h4>Scrapers (×4 scripts)</h4>
+        <h4>Scrapers (×6 scripts)</h4>
         <ul class="bullet-list">
-          <li>RSS + library integrations</li>
+          <li>RSS + library + web integrations</li>
           <li>Pagination &amp; cutoff logic</li>
           <li>Field normalisation</li>
-          <li>CSV &amp; JSON variants</li>
+          <li>CSV &amp; JSON variants per source</li>
         </ul>
       </div>
       <div class="subcard">
@@ -652,7 +643,7 @@
           <li>Claude Haiku prompt design</li>
           <li>Topic taxonomy definition</li>
           <li>Hallucination filtering</li>
-          <li>Anomaly detection algorithm</li>
+          <li>Cross-source sentiment analysis</li>
         </ul>
       </div>
       <div class="subcard">
