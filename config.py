@@ -20,12 +20,14 @@ DB_PATH = "reviews.db"
 # Ingestion: glob patterns to find JSON files produced by the scrapers.
 # run_pipeline.py selects the most recently modified file matching each pattern.
 # ---------------------------------------------------------------------------
-APPSTORE_JSON_GLOB   = "Reviews/ScottishPower_AppStore_Reviews_*.json"
-PLAYSTORE_JSON_GLOB  = "Reviews/ScottishPower_Playstore_Reviews_*.json"
+APPSTORE_JSON_GLOB    = "Reviews/ScottishPower_AppStore_Reviews_*.json"
+PLAYSTORE_JSON_GLOB   = "Reviews/ScottishPower_Playstore_Reviews_*.json"
+TRUSTPILOT_JSON_GLOB  = "Reviews/ScottishPower_Trustpilot_Reviews_*.json"
 
 # Scraper scripts (relative to the project root)
-APPSTORE_SCRAPER  = "AppStoreScraper_JSON.py"
-PLAYSTORE_SCRAPER = "PlayStoreScraper_JSON.py"
+APPSTORE_SCRAPER   = "AppStoreScraper_JSON.py"
+PLAYSTORE_SCRAPER  = "PlayStoreScraper_JSON.py"
+TRUSTPILOT_SCRAPER = "TrustpilotScraper_JSON.py"
 
 # Path where the dashboard CSV is written and committed for Streamlit Cloud
 CSV_EXPORT_PATH = "data/reviews_analysed.csv"
