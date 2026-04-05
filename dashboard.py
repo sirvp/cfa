@@ -122,29 +122,30 @@ st.caption(f"Data from {min_date} to {max_date} · {len(df)} total reviews analy
 # ---------------------------------------------------------------------------
 
 total = len(filtered)
+with_review = filtered["body"].fillna("").str.strip().ne("").sum()
 positive = (filtered["sentiment"] == "positive").sum()
 negative = (filtered["sentiment"] == "negative").sum()
 avg_rating = filtered["rating"].mean()
 pos_pct = (positive / total * 100) if total else 0
 
 k1, k2, k3, k4, k5 = st.columns(5)
-k1.metric("Total Reviews", f"{total:,}")
+k1.metric("Total Ratings", f"{total:,}")
+k2.metric("Ratings with Reviews", f"{with_review:,}")
 
 neg_pct = (negative / total * 100) if total else 0
-k2.markdown(
+k3.markdown(
     f"<p style='font-size:0.875rem;color:#5f6971;margin:0'>Positive</p>"
     f"<p style='font-size:1.95rem;font-weight:700;color:#16a34a;margin:0;line-height:1.2'>{positive:,}</p>"
     f"<p style='font-size:0.8rem;color:#16a34a;margin:0'>↑ {pos_pct:.0f}%</p>",
     unsafe_allow_html=True,
 )
-k3.markdown(
+k4.markdown(
     f"<p style='font-size:0.875rem;color:#5f6971;margin:0'>Negative</p>"
     f"<p style='font-size:1.95rem;font-weight:700;color:#dc2626;margin:0;line-height:1.2'>{negative:,}</p>"
     f"<p style='font-size:0.8rem;color:#dc2626;margin:0'>↑ {neg_pct:.0f}%</p>",
     unsafe_allow_html=True,
 )
-k4.metric("Avg Rating", f"{avg_rating:.2f} ★" if not pd.isna(avg_rating) else "—")
-k5.metric("Unanalysed", f"{len(df) - len(df.dropna(subset=['sentiment'])):,}")
+k5.metric("Avg Rating", f"{avg_rating:.2f} ★" if not pd.isna(avg_rating) else "—")
 
 st.divider()
 
