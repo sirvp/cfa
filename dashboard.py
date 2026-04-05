@@ -93,7 +93,8 @@ selected_topics = st.sidebar.multiselect("Topics (any match)", topic_options)
 
 min_date = df["date_posted"].min().date()
 max_date = df["date_posted"].max().date()
-date_range = st.sidebar.date_input("Date range", value=(min_date, max_date), min_value=min_date, max_value=max_date)
+default_start = max(min_date, max_date - timedelta(days=6))  # last 7 days by default
+date_range = st.sidebar.date_input("Date range", value=(default_start, max_date), min_value=min_date, max_value=max_date)
 
 # Apply filters
 filtered = df.copy()
@@ -247,6 +248,54 @@ else:
 
 api_key = get_api_key()
 
+# Cache key: regenerate only when the filtered dataset or period changes
+_summary_cache_key = f"{current_range_str}|{total}|{len(prior_slice)}"
+
+def render_summary_card(data: dict) -> None:
+    """Render the structured JSON summary as an infographic card."""
+    snap_col, change_col = st.columns([3, 2])
+    with snap_col:
+        st.markdown(
+            f"<div style='font-size:1.1rem;font-weight:700;color:#2d2d2d'>{data.get('snapshot','')}</div>",
+            unsafe_allow_html=True,
+        )
+    with change_col:
+        st.markdown(
+            f"<div style='font-size:0.85rem;color:#5f6971;text-align:right;padding-top:4px'>{data.get('vs_prior','')}</div>",
+            unsafe_allow_html=True,
+        )
+
+    PILL_COLOURS = ["#9d131f", "#c0392b", "#e67e22"]
+    issues = data.get("top_issues", [])
+    pills_html = "<div style='display:flex;gap:8px;flex-wrap:wrap;margin:10px 0'>"
+    for i, issue in enumerate(issues):
+        bg = PILL_COLOURS[i % len(PILL_COLOURS)]
+        pills_html += (
+            f"<div style='background:{bg};color:#fff;border-radius:4px;"
+            f"padding:6px 12px;font-size:0.82rem;line-height:1.3'>"
+            f"<strong>{issue.get('topic','')} ({issue.get('count','')})</strong>"
+            f"<br>{issue.get('detail','')}</div>"
+        )
+    pills_html += "</div>"
+    st.markdown(pills_html, unsafe_allow_html=True)
+
+    left, right = st.columns(2)
+    with left:
+        st.markdown(
+            f"<div style='background:#fff3cd;border-left:4px solid #e6a817;"
+            f"border-radius:4px;padding:10px 14px;font-size:0.85rem;color:#2d2d2d'>"
+            f"⚠️ <strong>Key change</strong><br>{data.get('key_change','')}</div>",
+            unsafe_allow_html=True,
+        )
+    with right:
+        st.markdown(
+            f"<div style='background:#eff3e8;border-left:4px solid #486a14;"
+            f"border-radius:4px;padding:10px 14px;font-size:0.85rem;color:#2d2d2d'>"
+            f"💡 <strong>Recommendation</strong><br>{data.get('recommendation','')}</div>",
+            unsafe_allow_html=True,
+        )
+
+
 if not api_key:
     st.info("Set `ANTHROPIC_API_KEY` in your environment or Streamlit secrets to enable AI summaries.")
 elif total == 0:
@@ -256,11 +305,15 @@ else:
         f"Comparing **{current_range_str}** ({total} reviews) "
         f"against prior period **{prior_range_str}** ({len(prior_slice)} reviews)"
     )
-    if st.button("Generate Executive Summary", type="primary"):
+
+    # Auto-generate on first load or when the period/data changes; button forces refresh
+    if (
+        "summary_data" not in st.session_state
+        or st.session_state.get("summary_cache_key") != _summary_cache_key
+    ):
         current_stats = period_stats(filtered)
         prior_stats = period_stats(prior_slice)
         prompt = build_summary_prompt(current_stats, prior_stats, current_range_str, prior_range_str)
-
         client = anthropic.Anthropic(api_key=api_key)
         with st.spinner("Generating summary…"):
             msg = client.messages.create(
@@ -268,60 +321,22 @@ else:
                 max_tokens=400,
                 messages=[{"role": "user", "content": prompt}],
             )
-            raw = msg.content[0].text.strip()
-
-        # Parse JSON — strip markdown fences if present
+        raw = msg.content[0].text.strip()
         import re as _re
         _match = _re.search(r"\{.*\}", raw, _re.DOTALL)
         try:
-            data = json.loads(_match.group(0) if _match else raw)
+            st.session_state["summary_data"] = json.loads(_match.group(0) if _match else raw)
+            st.session_state["summary_cache_key"] = _summary_cache_key
         except Exception:
             st.markdown(raw)
-        else:
-            # ── Snapshot bar ─────────────────────────────────────
-            snap_col, change_col = st.columns([3, 2])
-            with snap_col:
-                st.markdown(
-                    f"<div style='font-size:1.1rem;font-weight:700;color:#2d2d2d'>{data.get('snapshot','')}</div>",
-                    unsafe_allow_html=True,
-                )
-            with change_col:
-                st.markdown(
-                    f"<div style='font-size:0.85rem;color:#5f6971;text-align:right;padding-top:4px'>{data.get('vs_prior','')}</div>",
-                    unsafe_allow_html=True,
-                )
+            st.session_state.pop("summary_data", None)
 
-            # ── Topic pills ───────────────────────────────────────
-            PILL_COLOURS = ["#9d131f", "#c0392b", "#e67e22"]  # red shades for issues
-            issues = data.get("top_issues", [])
-            pills_html = "<div style='display:flex;gap:8px;flex-wrap:wrap;margin:10px 0'>"
-            for i, issue in enumerate(issues):
-                bg = PILL_COLOURS[i % len(PILL_COLOURS)]
-                pills_html += (
-                    f"<div style='background:{bg};color:#fff;border-radius:4px;"
-                    f"padding:6px 12px;font-size:0.82rem;line-height:1.3'>"
-                    f"<strong>{issue.get('topic','')} ({issue.get('count','')})</strong>"
-                    f"<br>{issue.get('detail','')}</div>"
-                )
-            pills_html += "</div>"
-            st.markdown(pills_html, unsafe_allow_html=True)
+    if st.button("↺ Refresh", type="secondary"):
+        st.session_state.pop("summary_data", None)
+        st.rerun()
 
-            # ── Key change + recommendation ───────────────────────
-            left, right = st.columns(2)
-            with left:
-                st.markdown(
-                    f"<div style='background:#fff3cd;border-left:4px solid #e6a817;"
-                    f"border-radius:4px;padding:10px 14px;font-size:0.85rem;color:#2d2d2d'>"
-                    f"⚠️ <strong>Key change</strong><br>{data.get('key_change','')}</div>",
-                    unsafe_allow_html=True,
-                )
-            with right:
-                st.markdown(
-                    f"<div style='background:#eff3e8;border-left:4px solid #486a14;"
-                    f"border-radius:4px;padding:10px 14px;font-size:0.85rem;color:#2d2d2d'>"
-                    f"💡 <strong>Recommendation</strong><br>{data.get('recommendation','')}</div>",
-                    unsafe_allow_html=True,
-                )
+    if "summary_data" in st.session_state:
+        render_summary_card(st.session_state["summary_data"])
 
 st.divider()
 
