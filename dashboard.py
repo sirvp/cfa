@@ -437,10 +437,16 @@ with col4:
     st.subheader("Store split")
     source_counts = filtered["source"].value_counts()
     if not source_counts.empty:
+        colour_map = {
+            "AppStore": "#3b82f6",
+            "PlayStore": "#8b5cf6",
+            "Trustpilot": "#00b67a",
+        }
         fig = px.pie(
             values=source_counts.values,
             names=source_counts.index,
-            color_discrete_sequence=["#3b82f6", "#8b5cf6"],
+            color=source_counts.index,
+            color_discrete_map=colour_map,
             hole=0.45,
         )
         fig.update_layout(margin=dict(t=10, b=0), height=350, legend=dict(orientation="h", y=-0.1))

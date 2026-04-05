@@ -2,11 +2,12 @@
 ingest.py — Incremental ingestion of app review JSON files into SQLite.
 
 Usage:
-    python ingest.py <json_file_path> <AppStore|PlayStore>
+    python ingest.py <json_file_path> <AppStore|PlayStore|Trustpilot>
 
 Example:
     python ingest.py Reviews/ScottishPower_AppStore_Reviews_2025-10-07_180days.json AppStore
     python ingest.py Reviews/ScottishPower_Playstore_Reviews_2025-10-07_180days.json PlayStore
+    python ingest.py Reviews/ScottishPower_Trustpilot_Reviews_2025-10-07_180days.json Trustpilot
 
 On first run all reviews in the file are ingested and a cursor is written.
 On subsequent runs only reviews newer than the cursor date are inserted,
@@ -112,10 +113,16 @@ def compute_review_id(source: str, raw: dict) -> str:
             + (raw.get("date") or "")
             + (raw.get("content") or "")
         )
-    else:  # PlayStore
+    elif source == "PlayStore":
         key = (
             (raw.get("userName") or "")
             + (raw.get("at") or "")
+            + (raw.get("content") or "")
+        )
+    else:  # Trustpilot — prefer the native platform ID; fall back to content hash
+        key = raw.get("id") or (
+            (raw.get("username") or "")
+            + (raw.get("date") or "")
             + (raw.get("content") or "")
         )
     return hashlib.sha256(key.encode("utf-8")).hexdigest()
@@ -183,6 +190,32 @@ def normalise_playstore(raw: dict) -> dict:
         "body": raw.get("content", ""),
         "app_version": raw.get("appVersion"),  # may be None — stored as SQL NULL
         "date_posted": raw["at"],
+    }
+
+
+def normalise_trustpilot(raw: dict) -> dict:
+    """Normalise a raw Trustpilot review dict into the shared schema.
+
+    Source field mapping:
+        username → author
+        content  → body
+        rating   → rating  (already int)
+        date     → date_posted
+        (no app_version — Trustpilot is not an app store)
+
+    Args:
+        raw: A single review dict from the Trustpilot JSON file.
+
+    Returns:
+        A normalised dict ready for insertion into raw_reviews.
+    """
+    return {
+        "source": "Trustpilot",
+        "author": raw.get("username", ""),
+        "rating": raw.get("rating"),
+        "body": raw.get("content", "") or "",
+        "app_version": None,
+        "date_posted": raw["date"],
     }
 
 
@@ -346,7 +379,12 @@ def ingest_source(file_path: str, source: str, conn: sqlite3.Connection) -> int:
     skipped_dup = 0
     max_date: str | None = None
 
-    normalise = normalise_appstore if source == "AppStore" else normalise_playstore
+    if source == "AppStore":
+        normalise = normalise_appstore
+    elif source == "PlayStore":
+        normalise = normalise_playstore
+    else:
+        normalise = normalise_trustpilot
 
     for raw in records:
         try:
@@ -401,7 +439,7 @@ def main() -> None:
     parser.add_argument("file_path", help="Path to the review JSON file")
     parser.add_argument(
         "source",
-        choices=["AppStore", "PlayStore"],
+        choices=["AppStore", "PlayStore", "Trustpilot"],
         help="Source identifier matching the JSON schema",
     )
     args = parser.parse_args()

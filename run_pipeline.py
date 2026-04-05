@@ -40,6 +40,8 @@ from config import (
     DB_PATH,
     PLAYSTORE_JSON_GLOB,
     PLAYSTORE_SCRAPER,
+    TRUSTPILOT_JSON_GLOB,
+    TRUSTPILOT_SCRAPER,
 )
 
 logging.basicConfig(
@@ -88,7 +90,7 @@ def run_scrapers() -> None:
 
     Args: none
     """
-    for script in (APPSTORE_SCRAPER, PLAYSTORE_SCRAPER):
+    for script in (APPSTORE_SCRAPER, PLAYSTORE_SCRAPER, TRUSTPILOT_SCRAPER):
         logger.info("Running scraper: %s", script)
         result = subprocess.run(
             [sys.executable, script],
@@ -126,6 +128,7 @@ def run_ingest(db_path: str) -> None:
         for glob_pattern, source in [
             (APPSTORE_JSON_GLOB, "AppStore"),
             (PLAYSTORE_JSON_GLOB, "PlayStore"),
+            (TRUSTPILOT_JSON_GLOB, "Trustpilot"),
         ]:
             try:
                 file_path = find_latest_json(glob_pattern)
