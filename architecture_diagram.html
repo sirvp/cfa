@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScottishPower Review Intelligence — Architecture</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f0;
+    color: #1a2e05;
+    min-height: 100vh;
+    padding: 40px 32px 60px;
+  }
+
+  /* ── HEADER ─────────────────────────────────── */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .header-left h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #486a14;
+    line-height: 1.2;
+  }
+  .header-left p {
+    font-size: 13.5px;
+    color: #5a6e3a;
+    margin-top: 6px;
+  }
+  .badge-group { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .badge-green  { background: #486a14; color: #fff; }
+  .badge-teal   { background: #1a7a6e; color: #fff; }
+  .badge-amber  { background: #e07a00; color: #fff; }
+  .badge-purple { background: #5b3a8e; color: #fff; }
+
+  /* ── PIPELINE COLUMNS ────────────────────────── */
+  .pipeline {
+    display: flex;
+    gap: 0;
+    position: relative;
+    align-items: stretch;
+  }
+
+  /* vertical connector line behind blocks */
+  .connector-row {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    height: 30px;
+    align-items: center;
+    position: relative;
+  }
+  .connector-row::before {
+    content: '';
+    width: 2px;
+    height: 100%;
+    background: #b8cfa0;
+    position: absolute;
+    left: 50%;
+  }
+  .arrow-down {
+    width: 0; height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 10px solid #7aab3a;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── LAYER CARDS ─────────────────────────────── */
+  .layer {
+    background: #fff;
+    border-radius: 12px;
+    border: 1.5px solid #d4e3b5;
+    padding: 18px 20px;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(72,106,20,0.06);
+  }
+  .layer-num {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: #486a14;
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 8px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  .layer-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #2d4a0a;
+    margin-bottom: 12px;
+    padding-top: 4px;
+  }
+  .layer-title span {
+    display: inline-block;
+    margin-right: 6px;
+    font-size: 16px;
+  }
+
+  /* ── TWO COLUMN ROW ──────────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .two-col-narrow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .four-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* ── SUB-CARDS ───────────────────────────────── */
+  .subcard {
+    background: #f7faf2;
+    border: 1px solid #d4e3b5;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .subcard-blue {
+    background: #f0f6ff;
+    border-color: #b3d0f5;
+  }
+  .subcard-teal {
+    background: #f0faf8;
+    border-color: #a8d8d3;
+  }
+  .subcard-amber {
+    background: #fff8f0;
+    border-color: #f5cfaa;
+  }
+  .subcard-purple {
+    background: #f6f2ff;
+    border-color: #c9b8e8;
+  }
+  .subcard h4 {
+    font-size: 12px;
+    font-weight: 700;
+    color: #486a14;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .subcard-blue h4   { color: #1a5fa0; }
+  .subcard-teal h4   { color: #1a7a6e; }
+  .subcard-amber h4  { color: #b35f00; }
+  .subcard-purple h4 { color: #5b3a8e; }
+
+  .bullet-list { list-style: none; }
+  .bullet-list li {
+    font-size: 11.5px;
+    color: #3a4f1a;
+    padding: 2px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.45;
+  }
+  .bullet-list li::before {
+    content: '›';
+    color: #7aab3a;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 0px;
+  }
+
+  /* ── DB TABLE ────────────────────────────────── */
+  .db-layer {
+    background: #fff;
+    border-radius: 12px;
+    border: 1.5px solid #b3d0f5;
+    padding: 18px 20px;
+    box-shadow: 0 2px 8px rgba(26,95,160,0.06);
+  }
+  .db-layer .layer-num { background: #1a5fa0; }
+  .db-layer .layer-title { color: #1a3f6e; }
+
+  .db-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+    margin-top: 4px;
+  }
+  .db-table th {
+    background: #e8f1fc;
+    color: #1a3f6e;
+    padding: 7px 10px;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 1px solid #b3d0f5;
+  }
+  .db-table td {
+    padding: 6px 10px;
+    color: #3a4f70;
+    border-bottom: 1px solid #e8f1fc;
+    vertical-align: top;
+    line-height: 1.4;
+  }
+  .db-table tr:last-child td { border-bottom: none; }
+  .db-table tr:hover td { background: #f0f6ff; }
+
+  code {
+    background: #eef4e5;
+    color: #2d4a0a;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-family: 'Consolas', monospace;
+  }
+
+  /* ── AUTOMATION ──────────────────────────────── */
+  .automation-banner {
+    background: linear-gradient(135deg, #2d4a0a 0%, #486a14 100%);
+    border-radius: 10px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .automation-banner .icon { font-size: 24px; flex-shrink: 0; }
+  .automation-banner h4 { color: #d6f0a0; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .automation-banner p  { color: #b8d880; font-size: 11.5px; line-height: 1.5; }
+
+  /* ── HORIZONTAL FLOW (two blocks side-by-side with arrow) ── */
+  .h-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .h-arrow {
+    flex-shrink: 0;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .h-arrow::after {
+    content: '▶';
+    color: #7aab3a;
+    font-size: 16px;
+  }
+
+  /* ── TECH STACK FOOTER ───────────────────────── */
+  .tech-stack {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .tech-pill {
+    background: #f7faf2;
+    border: 1px solid #c8dfa8;
+    border-radius: 14px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: #3a5a10;
+    font-weight: 600;
+  }
+
+  /* ── DIVIDER ─────────────────────────────────── */
+  .section-divider {
+    border: none;
+    border-top: 1.5px solid #d4e3b5;
+    margin: 28px 0;
+  }
+
+  /* ── FOOTER ──────────────────────────────────── */
+  .page-footer {
+    margin-top: 48px;
+    text-align: center;
+    font-size: 11.5px;
+    color: #7a9a50;
+  }
+
+  /* highlights */
+  .hl { color: #486a14; font-weight: 700; }
+  .hl-blue { color: #1a5fa0; font-weight: 700; }
+  .hl-amber { color: #b35f00; font-weight: 700; }
+  .hl-teal { color: #1a7a6e; font-weight: 700; }
+
+  /* wide max */
+  .content-wrap { max-width: 1100px; margin: 0 auto; }
+
+  /* spacing helpers */
+  .mt8  { margin-top: 8px; }
+  .mt12 { margin-top: 12px; }
+  .mt16 { margin-top: 16px; }
+
+</style>
+</head>
+<body>
+<div class="content-wrap">
+
+  <!-- ══ HEADER ══════════════════════════════════════════════════════ -->
+  <div class="header">
+    <div class="header-left">
+      <h1>⚡ ScottishPower Review Intelligence — System Architecture</h1>
+      <p>End-to-end pipeline: App Store &amp; Play Store → AI Analysis → Live Dashboard</p>
+    </div>
+    <div class="badge-group">
+      <span class="badge badge-green">🕐 Built in ~6 Hours</span>
+      <span class="badge badge-teal">🤖 Claude Haiku AI</span>
+      <span class="badge badge-amber">📅 Runs Daily at 06:00</span>
+      <span class="badge badge-purple">☁️ Streamlit Cloud</span>
+    </div>
+  </div>
+
+  <!-- ══ AUTOMATION BANNER ════════════════════════════════════════════ -->
+  <div class="automation-banner">
+    <div class="icon">⚙️</div>
+    <div>
+      <h4>Fully Automated Daily Pipeline — Zero Manual Steps</h4>
+      <p>Windows Task Scheduler fires <code style="background:#486a14;color:#d6f0a0">run_daily.bat</code> at 06:00 every morning → scrapes fresh reviews → AI-analyses them → exports to GitHub → Streamlit Cloud picks up the change and the dashboard is live with today's data.</p>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ══ LAYER 1: DATA SOURCES ════════════════════════════════════════ -->
+  <div class="layer">
+    <div class="layer-num">Layer 1 — Data Sources</div>
+    <div class="layer-title"><span>🌐</span> External App Stores</div>
+    <div class="two-col">
+      <div class="subcard subcard-blue">
+        <h4>Apple App Store (iOS)</h4>
+        <ul class="bullet-list">
+          <li>RSS feed: <code>itunes.apple.com/gb/rss/customerreviews/id=562202559</code></li>
+          <li>Public, no authentication required</li>
+          <li>10 pages × 50 reviews = <span class="hl-blue">500 reviews max</span></li>
+          <li>Filtered to <span class="hl-blue">last 180 days</span> — GB region</li>
+        </ul>
+      </div>
+      <div class="subcard subcard-teal">
+        <h4>Google Play Store (Android)</h4>
+        <ul class="bullet-list">
+          <li>Library: <code>google-play-scraper</code> (handles pagination tokens)</li>
+          <li>App ID: <code>uk.co.scottishpower</code></li>
+          <li>Batch size: <span class="hl-teal">200 reviews per page</span></li>
+          <li>Filtered to <span class="hl-teal">last 180 days</span> — UK region</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector-row"><div class="arrow-down"></div></div>
+
+  <!-- ══ LAYER 2: SCRAPERS ════════════════════════════════════════════ -->
+  <div class="layer">
+    <div class="layer-num">Layer 2 — Scrapers</div>
+    <div class="layer-title"><span>🕸️</span> Data Collection Scripts</div>
+    <div class="two-col">
+      <div class="subcard">
+        <h4>AppStoreScraper_JSON.py</h4>
+        <ul class="bullet-list">
+          <li>Paginates RSS (pages 1–10); skips page 1 entry 0 (metadata)</li>
+          <li>Stops early once oldest review pre-dates the 180-day window</li>
+          <li>Handles missing fields (rating-only, no text)</li>
+          <li>Output: <code>Reviews/ScottishPower_AppStore_Reviews_YYYY-MM-DD.json</code></li>
+        </ul>
+      </div>
+      <div class="subcard">
+        <h4>PlayStoreScraper_JSON.py</h4>
+        <ul class="bullet-list">
+          <li>Follows continuation tokens until data exhausted or cutoff hit</li>
+          <li>Normalises field names, fills missing content with empty strings</li>
+          <li>Converts all dates to ISO format before writing</li>
+          <li>Output: <code>Reviews/ScottishPower_Playstore_Reviews_YYYY-MM-DD.json</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="tech-stack">
+      <span class="tech-pill">requests</span>
+      <span class="tech-pill">beautifulsoup4</span>
+      <span class="tech-pill">google-play-scraper</span>
+      <span class="tech-pill">JSON output</span>
+    </div>
+  </div>
+
+  <div class="connector-row"><div class="arrow-down"></div></div>
+
+  <!-- ══ LAYER 3: INGESTION ═══════════════════════════════════════════ -->
+  <div class="layer">
+    <div class="layer-num">Layer 3 — Ingestion &amp; Deduplication</div>
+    <div class="layer-title"><span>📥</span> ingest.py — Smart Incremental Load into SQLite</div>
+    <div class="four-col">
+      <div class="subcard">
+        <h4>1. SHA-256 ID</h4>
+        <ul class="bullet-list">
+          <li>Stable review identity: <code>hash(username + date + content)</code></li>
+          <li>Prevents duplicates across multiple runs</li>
+        </ul>
+      </div>
+      <div class="subcard">
+        <h4>2. Field Normalisation</h4>
+        <ul class="bullet-list">
+          <li>Maps AppStore &amp; Play Store field names to shared schema</li>
+          <li><code>author, rating, body, app_version, date_posted</code></li>
+        </ul>
+      </div>
+      <div class="subcard">
+        <h4>3. Cursor Filtering</h4>
+        <ul class="bullet-list">
+          <li>Tracks <code>last_fetched_date</code> per source in DB</li>
+          <li>Only processes reviews newer than the cursor</li>
+        </ul>
+      </div>
+      <div class="subcard">
+        <h4>4. Deduplication</h4>
+        <ul class="bullet-list">
+          <li>UNIQUE constraint on <code>(source, review_id)</code></li>
+          <li>Logs: inserted / skipped-old / skipped-dup</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector-row"><div class="arrow-down"></div></div>
+
+  <!-- ══ LAYER 4: AI ANALYSIS ═════════════════════════════════════════ -->
+  <div class="layer" style="border-color:#c9b8e8;">
+    <div class="layer-num" style="background:#5b3a8e;">Layer 4 — AI Analysis</div>
+    <div class="layer-title" style="color:#3a1a6e;"><span>🤖</span> analyse.py — Claude Haiku (claude-haiku-4-5) via Anthropic API</div>
+    <div class="two-col">
+      <div class="subcard subcard-purple">
+        <h4>Prompt Construction</h4>
+        <ul class="bullet-list">
+          <li>Batches of 25 unprocessed reviews at a time</li>
+          <li>Sends review text + star rating</li>
+          <li>Provides fixed topic taxonomy to classify against:</li>
+          <li style="padding-left:14px;font-style:italic;color:#5b3a8e">login · billing · app_crash · smart_meter · customer_service · outage · account · other</li>
+          <li>Expects JSON back: <code>&#123; topics, sentiment, insight &#125;</code></li>
+        </ul>
+      </div>
+      <div class="subcard subcard-purple">
+        <h4>Response Handling</h4>
+        <ul class="bullet-list">
+          <li>Direct JSON parse; fallback regex if Claude wraps in markdown</li>
+          <li>Validates <code>sentiment</code> ∈ &#123; positive, neutral, negative &#125;</li>
+          <li><span style="color:#5b3a8e;font-weight:700">Hallucination filter:</span> topics stripped to allowed list only</li>
+          <li>Defaults to <code>["other"]</code> if no valid topics remain</li>
+          <li>Crash-resilient: each review committed individually; failed ones retried next run</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tech-stack">
+      <span class="tech-pill" style="border-color:#c9b8e8;background:#f6f2ff;color:#5b3a8e">anthropic SDK</span>
+      <span class="tech-pill" style="border-color:#c9b8e8;background:#f6f2ff;color:#5b3a8e">claude-haiku-4-5</span>
+      <span class="tech-pill" style="border-color:#c9b8e8;background:#f6f2ff;color:#5b3a8e">batch size: 25</span>
+      <span class="tech-pill" style="border-color:#c9b8e8;background:#f6f2ff;color:#5b3a8e">max_tokens: 256</span>
+    </div>
+  </div>
+
+  <div class="connector-row"><div class="arrow-down"></div></div>
+
+  <!-- ══ LAYER 5: ANOMALY DETECTION ══════════════════════════════════ -->
+  <div class="layer" style="border-color:#f5cfaa;">
+    <div class="layer-num" style="background:#e07a00;">Layer 5 — Anomaly Detection</div>
+    <div class="layer-title" style="color:#7a3a00;"><span>🔔</span> detect_anomalies.py — Volume Spike Alerts</div>
+    <div class="two-col-narrow">
+      <div class="subcard subcard-amber">
+        <h4>Detection Algorithm</h4>
+        <ul class="bullet-list">
+          <li>For each topic (per source): compute <span class="hl-amber">7-day rolling hourly average</span> using SQLite <code>json_each()</code></li>
+          <li>Get last-60-minute count</li>
+          <li>Flag if: <code>last_hour &gt; 2 × 7-day_avg</code></li>
+          <li>Suppressed when <code>avg = 0</code> (prevents false alarms on brand-new topics)</li>
+        </ul>
+      </div>
+      <div class="subcard subcard-amber">
+        <h4>Alerting Outputs</h4>
+        <ul class="bullet-list">
+          <li>Logs anomaly to <code>anomaly_log</code> DB table (append-only)</li>
+          <li>Prints formatted report to console / log file</li>
+          <li>Optional: Slack webhook notification (enabled via <code>SLACK_WEBHOOK_URL</code> env var)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector-row"><div class="arrow-down"></div></div>
+
+  <!-- ══ LAYER 6: PUBLISH ═════════════════════════════════════════════ -->
+  <div class="layer">
+    <div class="layer-num">Layer 6 — Publish &amp; Export</div>
+    <div class="layer-title"><span>🚀</span> run_pipeline.py — Export CSV → Git Commit → Push to GitHub</div>
+    <div class="two-col">
+      <div class="subcard">
+        <h4>CSV Export</h4>
+        <ul class="bullet-list">
+          <li>SQL join: <code>raw_reviews</code> + <code>insights</code> (processed only)</li>
+          <li>Writes <code>data/reviews_analysed.csv</code> (committed to repo)</li>
+          <li>Database file (<code>reviews.db</code>) is gitignored — CSV is the publish artefact</li>
+        </ul>
+      </div>
+      <div class="subcard">
+        <h4>Auto Git Push</h4>
+        <ul class="bullet-list">
+          <li>Runs <code>git add → commit → push origin main</code> via subprocess</li>
+          <li>Commit message: <code>chore: daily review data refresh YYYY-MM-DD</code></li>
+          <li>Streamlit Cloud detects the commit and redeploys automatically</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector-row"><div class="arrow-down"></div></div>
+
+  <!-- ══ LAYER 7: DASHBOARD ═══════════════════════════════════════════ -->
+  <div class="layer">
+    <div class="layer-num">Layer 7 — Live Dashboard</div>
+    <div class="layer-title"><span>📊</span> dashboard.py — Interactive Streamlit Web Application</div>
+    <div class="four-col">
+      <div class="subcard">
+        <h4>Data Loading</h4>
+        <ul class="bullet-list">
+          <li>Prefers local <code>reviews.db</code></li>
+          <li>Falls back to <code>reviews_analysed.csv</code> for Streamlit Cloud</li>
+          <li>60-second cache TTL</li>
+        </ul>
+      </div>
+      <div class="subcard">
+        <h4>Sidebar Filters</h4>
+        <ul class="bullet-list">
+          <li>Store (App Store / Play Store)</li>
+          <li>Sentiment, Star rating</li>
+          <li>Topics (multi-select)</li>
+          <li>Date range picker</li>
+        </ul>
+      </div>
+      <div class="subcard">
+        <h4>KPIs &amp; Charts</h4>
+        <ul class="bullet-list">
+          <li>Total, Positive%, Negative%, Avg ★</li>
+          <li>Sentiment over time (weekly stacked bar)</li>
+          <li>Rating distribution</li>
+          <li>Topics breakdown + Store split donut</li>
+        </ul>
+      </div>
+      <div class="subcard subcard-purple">
+        <h4>AI Executive Summary</h4>
+        <ul class="bullet-list">
+          <li>Calls Claude with period stats + prior-period comparison</li>
+          <li>Returns: snapshot, vs-prior, top issues, key change, recommendation</li>
+          <li>Cached; refreshable on demand</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tech-stack">
+      <span class="tech-pill">Streamlit</span>
+      <span class="tech-pill">Plotly</span>
+      <span class="tech-pill">pandas</span>
+      <span class="tech-pill">ScottishPower brand colours</span>
+      <span class="tech-pill">Streamlit Cloud deployment</span>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ══ DATABASE SCHEMA ══════════════════════════════════════════════ -->
+  <div class="db-layer">
+    <div class="layer-num">Data Layer — SQLite Database (reviews.db)</div>
+    <div class="layer-title" style="color:#1a3f6e;"><span>🗄️</span> Four Tables — Persistent Local Store</div>
+    <table class="db-table">
+      <thead>
+        <tr>
+          <th>Table</th>
+          <th>Key Columns</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>raw_reviews</code></td>
+          <td><code>id, source, review_id (UNIQUE), author, rating, body, app_version, date_posted, is_processed</code></td>
+          <td>Normalised reviews from both stores; <code>is_processed=0</code> flags work for the AI analyser</td>
+        </tr>
+        <tr>
+          <td><code>insights</code></td>
+          <td><code>review_id (FK), source, topics (JSON array), sentiment, insight, processed_at</code></td>
+          <td>Claude's analysis output per review; primary key is <code>(review_id, source)</code></td>
+        </tr>
+        <tr>
+          <td><code>ingestion_cursors</code></td>
+          <td><code>source (PK), last_fetched_date</code></td>
+          <td>Tracks the high-water mark per source to enable incremental ingestion on future runs</td>
+        </tr>
+        <tr>
+          <td><code>anomaly_log</code></td>
+          <td><code>id, topic, source, current_count, expected_avg, detected_at</code></td>
+          <td>Append-only record of every spike detection event across all pipeline runs</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ══ WHAT WENT INTO 6 HOURS ═══════════════════════════════════════ -->
+  <div class="layer" style="border-color:#7aab3a; background: linear-gradient(135deg,#f9fdf4,#eef6e0);">
+    <div class="layer-num" style="background:#2d6a00;">What went into ~6 hours</div>
+    <div class="layer-title"><span>🏗️</span> MVP Scope — Everything Designed, Built &amp; Deployed from Scratch</div>
+    <div class="four-col mt12">
+      <div class="subcard">
+        <h4>Scrapers (×4 scripts)</h4>
+        <ul class="bullet-list">
+          <li>RSS + library integrations</li>
+          <li>Pagination &amp; cutoff logic</li>
+          <li>Field normalisation</li>
+          <li>CSV &amp; JSON variants</li>
+        </ul>
+      </div>
+      <div class="subcard">
+        <h4>Pipeline Orchestration</h4>
+        <ul class="bullet-list">
+          <li>5-step run_pipeline.py</li>
+          <li>Crash-resilient retry logic</li>
+          <li>Auto Git commit &amp; push</li>
+          <li>Windows Task Scheduler setup</li>
+        </ul>
+      </div>
+      <div class="subcard">
+        <h4>AI Integration</h4>
+        <ul class="bullet-list">
+          <li>Claude Haiku prompt design</li>
+          <li>Topic taxonomy definition</li>
+          <li>Hallucination filtering</li>
+          <li>Anomaly detection algorithm</li>
+        </ul>
+      </div>
+      <div class="subcard">
+        <h4>Dashboard</h4>
+        <ul class="bullet-list">
+          <li>Streamlit multi-chart UI</li>
+          <li>Dynamic filters</li>
+          <li>AI executive summary card</li>
+          <li>Streamlit Cloud deployment</li>
+        </ul>
+      </div>
+    </div>
+    <div class="mt16" style="background:#e8f5d0;border-radius:8px;padding:12px 16px;">
+      <p style="font-size:12.5px;color:#2d4a0a;line-height:1.7;">
+        <strong>Technologies used:</strong>
+        Python · SQLite · Anthropic Claude API · Streamlit · Plotly · pandas · requests · BeautifulSoup4 · google-play-scraper · Git / GitHub · Windows Task Scheduler · Streamlit Cloud
+      </p>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ════════════════════════════════════════════════════════ -->
+  <div class="page-footer">
+    Made by Vishnu Prasad &nbsp;·&nbsp; ScottishPower Digital &nbsp;·&nbsp; April 2026
+  </div>
+
+</div>
+</body>
+</html>
