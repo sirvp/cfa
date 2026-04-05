@@ -36,17 +36,11 @@ st.set_page_config(
 
 # ---------------------------------------------------------------------------
 # Brand styling — extracted from ScottishPower index.css
-# ---------------------------------------------------------------------------
-# Colour tokens
-#   --primary-1: #334b0e  (darkest green)
-#   --primary-2: #486a14  (main brand green — used for active states, headers)
-#   --primary-3: #5c881a  (mid green — hover / accent)
-#   --bg-light:  #eff3e8  (very light green tint — sidebar / card backgrounds)
-#   --text:      #2d2d2d  (default body text)
-#   --subtle:    #5f6971  (secondary / caption text)
-#   --border:    #d7d9db  (dividers, table borders)
-#   --error:     #9d131f  (error / negative states)
-# Typography: Lato (400 / 700) loaded from Google Fonts, fallback Roboto → Helvetica → Arial
+# Colour tokens:
+#   --primary-1: #334b0e  --primary-2: #486a14  --primary-3: #5c881a
+#   --bg-light:  #eff3e8  --text: #2d2d2d  --subtle: #5f6971
+#   --border:    #d7d9db  --error: #9d131f
+# Font: Lato (400/700) via Google Fonts
 # ---------------------------------------------------------------------------
 
 st.markdown(
@@ -56,170 +50,35 @@ st.markdown(
       rel="stylesheet"
     />
     <style>
-      /* ── Global reset & font ─────────────────────────────────── */
-      html, body, [class*="css"] {
-        font-family: Lato, Roboto, Helvetica, Arial, sans-serif !important;
-        color: #2d2d2d;
-      }
+      /* Font */
+      html, body { font-family: Lato, Roboto, Helvetica, Arial, sans-serif !important; }
 
-      /* ── App background ──────────────────────────────────────── */
-      .stApp {
-        background-color: #ffffff;
-      }
+      /* Sidebar */
+      [data-testid="stSidebar"] { background-color: #eff3e8; border-right: 1px solid #d7d9db; }
 
-      /* ── Sidebar ─────────────────────────────────────────────── */
-      [data-testid="stSidebar"] {
-        background-color: #eff3e8;
-        border-right: 1px solid #d7d9db;
-      }
-      [data-testid="stSidebar"] .stMarkdown p,
-      [data-testid="stSidebar"] label,
-      [data-testid="stSidebar"] span {
-        color: #2d2d2d;
-      }
+      /* Headings */
+      h1 { color: #334b0e !important; font-weight: 700 !important; }
+      h2 { color: #486a14 !important; font-weight: 700 !important; }
+      h3 { color: #486a14 !important; font-weight: 700 !important; }
 
-      /* ── Page title (h1) ─────────────────────────────────────── */
-      h1, .stTitle {
-        font-size: 2.44140625rem !important;
-        line-height: 3rem !important;
-        font-weight: 700 !important;
-        color: #334b0e !important;
-      }
+      /* Metric cards */
+      [data-testid="stMetric"] { background-color: #eff3e8; border: 1px solid #d7d9db; border-radius: 4px; padding: 0.75rem 1rem; }
+      [data-testid="stMetricLabel"] { color: #5f6971 !important; }
+      [data-testid="stMetricValue"] { color: #334b0e !important; font-weight: 700 !important; }
+      [data-testid="stMetricDelta"] { color: #5c881a !important; }
 
-      /* ── Section subheadings (h2 / st.subheader) ─────────────── */
-      h2, [data-testid="stHeadingWithActionElements"] h2 {
-        font-size: 1.25rem !important;
-        line-height: 2rem !important;
-        font-weight: 700 !important;
-        color: #486a14 !important;
-      }
+      /* Primary button */
+      [data-testid="baseButton-primary"] { background-color: #486a14 !important; color: #ffffff !important; border: none !important; border-radius: 4px !important; font-weight: 700 !important; }
+      [data-testid="baseButton-primary"]:hover { background-color: #5c881a !important; }
 
-      /* ── h3 ──────────────────────────────────────────────────── */
-      h3 {
-        font-size: 1rem !important;
-        line-height: 1.5rem !important;
-        font-weight: 700 !important;
-        color: #486a14 !important;
-      }
+      /* Divider */
+      hr { border-color: #d7d9db !important; }
 
-      /* ── Caption / subtle text ───────────────────────────────── */
-      .stCaption, [data-testid="stCaptionContainer"] p {
-        color: #5f6971 !important;
-        font-size: 0.8rem !important;
-        line-height: 1rem !important;
-      }
+      /* Caption */
+      [data-testid="stCaptionContainer"] p { color: #5f6971 !important; }
 
-      /* ── Metric cards ────────────────────────────────────────── */
-      [data-testid="stMetric"] {
-        background-color: #eff3e8;
-        border: 1px solid #d7d9db;
-        border-radius: 4px;
-        padding: 0.75rem 1rem;
-      }
-      [data-testid="stMetricLabel"] {
-        color: #5f6971 !important;
-        font-size: 0.8rem !important;
-        font-weight: 400 !important;
-      }
-      [data-testid="stMetricValue"] {
-        color: #334b0e !important;
-        font-size: 1.953125rem !important;
-        font-weight: 700 !important;
-        line-height: 2.5rem !important;
-      }
-      [data-testid="stMetricDelta"] {
-        color: #5c881a !important;
-        font-size: 0.8rem !important;
-      }
-
-      /* ── Primary button ──────────────────────────────────────── */
-      button[kind="primary"], .stButton > button[kind="primary"] {
-        background-color: #486a14 !important;
-        color: #ffffff !important;
-        border: none !important;
-        border-radius: 4px !important;
-        font-family: Lato, Roboto, Helvetica, Arial, sans-serif !important;
-        font-weight: 700 !important;
-        padding: 0.25rem 1rem !important;
-        min-height: 32px;
-      }
-      button[kind="primary"]:hover, .stButton > button[kind="primary"]:hover {
-        background-color: #5c881a !important;
-      }
-
-      /* ── Secondary / default button ──────────────────────────── */
-      .stButton > button {
-        border-radius: 4px !important;
-        font-family: Lato, Roboto, Helvetica, Arial, sans-serif !important;
-        min-height: 32px;
-      }
-
-      /* ── Tabs ────────────────────────────────────────────────── */
-      [data-testid="stTabs"] button {
-        border-radius: 4px !important;
-        font-family: Lato, Roboto, Helvetica, Arial, sans-serif !important;
-        white-space: nowrap;
-        min-height: 32px;
-        padding: 0.25rem 1rem 0.25rem 0.75rem !important;
-        gap: 0.5rem;
-      }
-      [data-testid="stTabs"] button:hover {
-        background-color: #d7d9db !important;
-      }
-      [data-testid="stTabs"] button[aria-selected="true"] {
-        background-color: #486a14 !important;
-        color: #ffffff !important;
-      }
-
-      /* ── Dataframe / table ───────────────────────────────────── */
-      [data-testid="stDataFrame"] thead th {
-        background-color: #eff3e8 !important;
-        color: #2d2d2d !important;
-        font-weight: 700 !important;
-        border-bottom: 1px solid #d7d9db !important;
-      }
-      [data-testid="stDataFrame"] td {
-        color: #2d2d2d !important;
-        font-size: 1rem !important;
-        line-height: 1.5rem !important;
-        padding: 0.75rem !important;
-        border-bottom: 1px solid #d7d9db !important;
-      }
-
-      /* ── Divider ─────────────────────────────────────────────── */
-      hr {
-        border-color: #d7d9db !important;
-      }
-
-      /* ── Info / alert boxes ──────────────────────────────────── */
-      [data-testid="stAlert"] {
-        border-radius: 4px !important;
-        border-left: 4px solid #486a14 !important;
-        background-color: #eff3e8 !important;
-        color: #2d2d2d !important;
-      }
-
-      /* ── Select / multiselect ────────────────────────────────── */
-      [data-testid="stSelectbox"] > div > div,
-      [data-testid="stMultiSelect"] > div > div {
-        border-radius: 4px !important;
-        border-color: #d7d9db !important;
-      }
-      [data-testid="stSelectbox"] > div > div:focus-within,
-      [data-testid="stMultiSelect"] > div > div:focus-within {
-        border-color: #486a14 !important;
-        box-shadow: 0 0 0 2px rgba(72, 106, 20, 0.2) !important;
-      }
-
-      /* ── Spinner ─────────────────────────────────────────────── */
-      [data-testid="stSpinner"] svg {
-        stroke: #486a14 !important;
-      }
-
-      /* ── Tooltip shadow (matches design system) ──────────────── */
-      [data-testid="stTooltipIcon"] {
-        color: #5f6971;
-      }
+      /* Info boxes */
+      [data-testid="stAlert"] { border-left: 4px solid #486a14 !important; background-color: #eff3e8 !important; }
     </style>
     """,
     unsafe_allow_html=True,
