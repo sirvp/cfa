@@ -1,6 +1,7 @@
 # PLAYSTORE REVIEWS SCRAPER
 # Scrapes reviews from the last x days grom Google PlayStore for the given App in given region, and saves it to a file
 
+import os
 from google_play_scraper import Sort, reviews
 import pandas as pd
 from datetime import datetime, timedelta
@@ -23,6 +24,7 @@ reviews['at'] = pd.to_datetime(reviews['at'])
 new_reviews = reviews[reviews['at']>start_date]
 new_reviews = new_reviews.drop(['reviewId','userImage','thumbsUpCount','repliedAt','replyContent','reviewCreatedVersion'],axis=1)
 new_reviews['Source'] = 'PlayStore'
+os.makedirs("Reviews", exist_ok=True)
 csv_file = f"Reviews/ScottishPower_Playstore_Reviews_{start_date_str}_{period}days.csv"
 new_reviews.to_csv(csv_file, index=False)
 

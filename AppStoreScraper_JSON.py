@@ -2,6 +2,7 @@
 # Scrapes reviews from the last x days from iOS AppStore for the given app in given country, and saves it to a file
 # Paginates through all available RSS pages (max 10 × 50 = 500 reviews) to maximise coverage.
 
+import os
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -39,12 +40,15 @@ for page in range(1, 11):
             page_oldest = review_date
 
         if review_date >= since_date:
+            # content tag is absent for ratings-only entries — default to empty string
+            content_tag = entry.find("content")
+            version_tag = entry.find("im:version")
             reviews.append({
                 "username": entry.find("author").find("name").text,
-                "content": entry.find("content").text,
+                "content": content_tag.text if content_tag else "",
                 "rating": entry.find("im:rating").text,
                 "date": review_date.isoformat(),
-                "version": entry.find("im:version").text,
+                "version": version_tag.text if version_tag else "",
                 "source": "AppStore"
             })
 
@@ -54,6 +58,7 @@ for page in range(1, 11):
 
 # Specify the path and filename for the JSON file
 since_date_str = since_date.strftime("%Y-%m-%d")
+os.makedirs("Reviews", exist_ok=True)
 json_file = f"Reviews/ScottishPower_AppStore_Reviews_{since_date_str}_{period}days.json"
 
 with open(json_file, "w", encoding="utf-8") as file:
