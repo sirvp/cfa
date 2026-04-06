@@ -5,9 +5,9 @@ Usage:
     python ingest.py <json_file_path> <AppStore|PlayStore|Trustpilot>
 
 Example:
-    python ingest.py Reviews/ScottishPower_AppStore_Reviews_2025-10-07_180days.json AppStore
-    python ingest.py Reviews/ScottishPower_Playstore_Reviews_2025-10-07_180days.json PlayStore
-    python ingest.py Reviews/ScottishPower_Trustpilot_Reviews_2025-10-07_180days.json Trustpilot
+    python ingest.py Reviews/UtilityCompany_AppStore_Reviews_2025-10-07_180days.json AppStore
+    python ingest.py Reviews/UtilityCompany_Playstore_Reviews_2025-10-07_180days.json PlayStore
+    python ingest.py Reviews/UtilityCompany_Trustpilot_Reviews_2025-10-07_180days.json Trustpilot
 
 On first run all reviews in the file are ingested and a cursor is written.
 On subsequent runs only reviews newer than the cursor date are inserted,

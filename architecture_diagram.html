@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ScottishPower Review Intelligence — Architecture</title>
+<title>Utility Company Review Intelligence — Architecture</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -327,7 +327,7 @@
   <!-- ══ HEADER ══════════════════════════════════════════════════════ -->
   <div class="header">
     <div class="header-left">
-      <h1>⚡ ScottishPower Review Intelligence — System Architecture</h1>
+      <h1>⚡ Utility Company Review Intelligence — System Architecture</h1>
       <p>End-to-end pipeline: App Store, Play Store &amp; Trustpilot → AI Analysis → Live Dashboard</p>
     </div>
     <div class="badge-group">
@@ -397,7 +397,7 @@
           <li>Paginates RSS (pages 1–10); skips page 1 entry 0 (metadata)</li>
           <li>Stops early once oldest review pre-dates the 180-day window</li>
           <li>Handles missing fields (rating-only, no text)</li>
-          <li>Output: <code>Reviews/ScottishPower_AppStore_Reviews_YYYY-MM-DD.json</code></li>
+          <li>Output: <code>Reviews/Utility Company_AppStore_Reviews_YYYY-MM-DD.json</code></li>
         </ul>
       </div>
       <div class="subcard">
@@ -406,7 +406,7 @@
           <li>Follows continuation tokens until data exhausted or cutoff hit</li>
           <li>Normalises field names, fills missing content with empty strings</li>
           <li>Converts all dates to ISO format before writing</li>
-          <li>Output: <code>Reviews/ScottishPower_Playstore_Reviews_YYYY-MM-DD.json</code></li>
+          <li>Output: <code>Reviews/Utility Company_Playstore_Reviews_YYYY-MM-DD.json</code></li>
         </ul>
       </div>
       <div class="subcard subcard-amber">
@@ -415,7 +415,7 @@
           <li>Paginates HTML review pages with BeautifulSoup</li>
           <li>Stops early once reviews pre-date the 180-day window</li>
           <li>Normalises star ratings (1–5) from Trustpilot score classes</li>
-          <li>Output: <code>Reviews/ScottishPower_Trustpilot_Reviews_YYYY-MM-DD.json</code></li>
+          <li>Output: <code>Reviews/Utility Company_Trustpilot_Reviews_YYYY-MM-DD.json</code></li>
         </ul>
       </div>
     </div>
@@ -573,7 +573,7 @@
       <span class="tech-pill">Streamlit</span>
       <span class="tech-pill">Plotly</span>
       <span class="tech-pill">pandas</span>
-      <span class="tech-pill">ScottishPower brand colours</span>
+      <span class="tech-pill">Utility Company brand colours</span>
       <span class="tech-pill">Streamlit Cloud deployment</span>
     </div>
   </div>
@@ -666,7 +666,7 @@
 
   <!-- ══ FOOTER ════════════════════════════════════════════════════════ -->
   <div class="page-footer">
-    Made by Vishnu Prasad &nbsp;·&nbsp; ScottishPower Digital &nbsp;·&nbsp; April 2026
+    Made by Vishnu Prasad &nbsp;·&nbsp; Utility Company Digital &nbsp;·&nbsp; April 2026
   </div>
 
 </div>

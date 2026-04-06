@@ -55,7 +55,7 @@ new_reviews['Source'] = 'PlayStore'
 new_reviews['at'] = new_reviews['at'].dt.strftime('%Y-%m-%dT%H:%M:%S')
 
 os.makedirs("Reviews", exist_ok=True)
-json_file = f"Reviews/ScottishPower_Playstore_Reviews_{start_date_str}_{period}days.json"
+json_file = f"Reviews/UtilityCompany_Playstore_Reviews_{start_date_str}_{period}days.json"
 new_reviews.to_json(json_file, orient='records', indent=2)
 
 print(f"Reviews saved to {json_file} ({len(new_reviews)} reviews)")

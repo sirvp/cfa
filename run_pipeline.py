@@ -1,5 +1,5 @@
 """
-run_pipeline.py — Orchestrates the full ScottishPower review intelligence pipeline.
+run_pipeline.py — Orchestrates the full review intelligence pipeline.
 
 Usage:
     python run_pipeline.py
@@ -60,7 +60,7 @@ def find_latest_json(pattern: str) -> str:
     """Return the most recently modified JSON file matching a glob pattern.
 
     Args:
-        pattern: A glob pattern, e.g. 'Reviews/ScottishPower_AppStore_*.json'.
+        pattern: A glob pattern, e.g. 'Reviews/UtilityCompany_AppStore_*.json'.
 
     Returns:
         Absolute path of the newest matching file.
@@ -287,7 +287,7 @@ def run_publish(db_path: str, csv_path: str) -> None:
 
 def main() -> None:
     """Run the full daily pipeline: scrape → ingest → analyse → detect → publish."""
-    logger.info("=== ScottishPower Review Pipeline ===")
+    logger.info("=== Review Intelligence Pipeline ===")
 
     logger.info("Step 1/5: Scraping fresh reviews")
     try:

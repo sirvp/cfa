@@ -1,5 +1,5 @@
 [theme]
-# ScottishPower brand colours — extracted from index.css
+# Brand colours
 # --primary-2: #486a14  --bg-light: #eff3e8
 # --text: #2d2d2d       --border: #d7d9db
 primaryColor        = "#486a14"

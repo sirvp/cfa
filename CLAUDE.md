@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Two pairs of scripts that scrape app reviews for the ScottishPower app and save them to a `Reviews/` output directory. Each scraper has a CSV variant and a JSON variant.
+Two pairs of scripts that scrape app reviews for the utility company and save them to a `Reviews/` output directory. Each scraper has a CSV variant and a JSON variant.
 
 ## Running the scripts
 
@@ -16,7 +16,7 @@ python PlayStoreScraper.py       # CSV output
 python PlayStoreScraper_JSON.py  # JSON output
 ```
 
-The `Reviews/` directory must exist before running — the scripts do not create it.
+The `Reviews/` directory is created automatically by the scripts if it does not exist.
 
 ## Dependencies
 

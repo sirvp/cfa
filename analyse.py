@@ -141,7 +141,7 @@ def build_prompt(review_body: str, rating: int | None) -> str:
         '"insight": "User cannot log in due to a persistent authentication bug."}'
     )
     return (
-        f"Analyse this app review for a UK energy utility (ScottishPower).\n\n"
+        f"Analyse this app review for a UK energy utility.\n\n"
         f'Review text: "{review_body}"\n'
         f"Star rating: {rating_str}\n\n"
         f"Respond with ONLY a valid JSON object. No explanation, no markdown, no code fences.\n"

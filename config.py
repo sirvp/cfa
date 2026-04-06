@@ -1,5 +1,5 @@
 """
-config.py — Central configuration for the ScottishPower review intelligence pipeline.
+config.py — Central configuration for the review intelligence pipeline.
 
 All scripts import constants from here; nothing is hardcoded across files.
 """
@@ -20,9 +20,9 @@ DB_PATH = "reviews.db"
 # Ingestion: glob patterns to find JSON files produced by the scrapers.
 # run_pipeline.py selects the most recently modified file matching each pattern.
 # ---------------------------------------------------------------------------
-APPSTORE_JSON_GLOB    = "Reviews/ScottishPower_AppStore_Reviews_*.json"
-PLAYSTORE_JSON_GLOB   = "Reviews/ScottishPower_Playstore_Reviews_*.json"
-TRUSTPILOT_JSON_GLOB  = "Reviews/ScottishPower_Trustpilot_Reviews_*.json"
+APPSTORE_JSON_GLOB    = "Reviews/UtilityCompany_AppStore_Reviews_*.json"
+PLAYSTORE_JSON_GLOB   = "Reviews/UtilityCompany_Playstore_Reviews_*.json"
+TRUSTPILOT_JSON_GLOB  = "Reviews/UtilityCompany_Trustpilot_Reviews_*.json"
 
 # Scraper scripts (relative to the project root)
 APPSTORE_SCRAPER   = "AppStoreScraper_JSON.py"

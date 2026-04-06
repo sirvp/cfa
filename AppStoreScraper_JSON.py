@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 # Set the desired parameters
 country = "gb"  # Country code for the App Store
-app_id = "562202559"  # App ID for ScottishPower
+app_id = "562202559"
 period = 180  # Number of days you need reviews for till today
 since_date = datetime.now() - timedelta(days=period)
 since_date = since_date.replace(tzinfo=None)
@@ -59,7 +59,7 @@ for page in range(1, 11):
 # Specify the path and filename for the JSON file
 since_date_str = since_date.strftime("%Y-%m-%d")
 os.makedirs("Reviews", exist_ok=True)
-json_file = f"Reviews/ScottishPower_AppStore_Reviews_{since_date_str}_{period}days.json"
+json_file = f"Reviews/UtilityCompany_AppStore_Reviews_{since_date_str}_{period}days.json"
 
 with open(json_file, "w", encoding="utf-8") as file:
     json.dump(reviews, file, ensure_ascii=False, indent=2)

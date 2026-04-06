@@ -1,6 +1,6 @@
-# ScottishPower Review Intelligence Pipeline
+# Utility Company Review Intelligence Pipeline
 
-A local Python pipeline that ingests ScottishPower app reviews from JSON files,
+A local Python pipeline that ingests Utility Company app reviews from JSON files,
 analyses them with Claude Haiku, and detects unusual spikes in topic volume.
 
 ---
@@ -57,8 +57,8 @@ This runs all three steps in order:
 Load a review JSON file into `reviews.db`:
 
 ```bash
-python ingest.py Reviews/ScottishPower_AppStore_Reviews_2025-10-07_180days.json AppStore
-python ingest.py Reviews/ScottishPower_Playstore_Reviews_2025-10-07_180days.json PlayStore
+python ingest.py Reviews/Utility Company_AppStore_Reviews_2025-10-07_180days.json AppStore
+python ingest.py Reviews/Utility Company_Playstore_Reviews_2025-10-07_180days.json PlayStore
 ```
 
 On the first run all reviews in the file are ingested and a cursor is saved.
@@ -97,8 +97,8 @@ All tuneable constants live in `config.py`:
 | `BATCH_SIZE` | `25` | Reviews per Claude API batch |
 | `MODEL_NAME` | `claude-haiku-4-5-20251001` | Claude model used for analysis |
 | `DB_PATH` | `reviews.db` | SQLite database file path |
-| `APPSTORE_JSON_PATH` | `Reviews/ScottishPower_AppStore_Reviews_2025-10-07_180days.json` | App Store input file |
-| `PLAYSTORE_JSON_PATH` | `Reviews/ScottishPower_Playstore_Reviews_2025-10-07_180days.json` | Play Store input file |
+| `APPSTORE_JSON_PATH` | `Reviews/Utility Company_AppStore_Reviews_2025-10-07_180days.json` | App Store input file |
+| `PLAYSTORE_JSON_PATH` | `Reviews/Utility Company_Playstore_Reviews_2025-10-07_180days.json` | Play Store input file |
 | `TOPICS` | `[login, billing, app_crash, ...]` | Fixed topic taxonomy for analysis |
 
 To point the pipeline at a new scraper output, update the `*_JSON_PATH` constants in `config.py`.

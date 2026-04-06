@@ -1,5 +1,5 @@
 """
-dashboard.py — Streamlit dashboard for ScottishPower review insights.
+dashboard.py — Streamlit dashboard for utility company review insights.
 
 Run with:
     streamlit run dashboard.py
@@ -29,7 +29,7 @@ TOPICS = [
 # ---------------------------------------------------------------------------
 
 st.set_page_config(
-    page_title="ScottishPower App Reviews",
+    page_title="Utility Company App Reviews",
     page_icon="⚡",
     layout="wide",
 )
@@ -254,7 +254,7 @@ def build_summary_prompt(current: dict, prior: dict, current_range: str, prior_r
             lines.append(f"    - {ins}")
         return "\n".join(lines)
 
-    return f"""You are an analyst for the ScottishPower digital team. Return ONLY a JSON object — no prose, no markdown fences.
+    return f"""You are an analyst for the utility company digital team. Return ONLY a JSON object — no prose, no markdown fences.
 
 CURRENT PERIOD ({current_range}):
 {fmt(current)}

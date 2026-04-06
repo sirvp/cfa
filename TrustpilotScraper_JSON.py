@@ -1,5 +1,5 @@
 # TRUSTPILOT REVIEWS SCRAPER
-# Scrapes reviews from the last x days from Trustpilot for ScottishPower and saves to a file
+# Scrapes reviews from the last x days from Trustpilot for the utility company and saves to a file
 # Trustpilot limits unauthenticated access to 10 pages per filter combination. To maximise
 # coverage, we paginate each star-rating filter (1–5) separately, giving up to 5×10×20 = 1000
 # reviews. Reviews are deduplicated by ID and filtered to the requested date window.
@@ -89,7 +89,7 @@ reviews.sort(key=lambda r: r["date"], reverse=True)
 
 # Save to JSON
 since_date_str = since_date.strftime("%Y-%m-%d")
-json_file = f"Reviews/ScottishPower_Trustpilot_Reviews_{since_date_str}_{period}days.json"
+json_file = f"Reviews/UtilityCompany_Trustpilot_Reviews_{since_date_str}_{period}days.json"
 
 with open(json_file, "w", encoding="utf-8") as file:
     json.dump(reviews, file, ensure_ascii=False, indent=2)

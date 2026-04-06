@@ -25,7 +25,7 @@ new_reviews = reviews[reviews['at']>start_date]
 new_reviews = new_reviews.drop(['reviewId','userImage','thumbsUpCount','repliedAt','replyContent','reviewCreatedVersion'],axis=1)
 new_reviews['Source'] = 'PlayStore'
 os.makedirs("Reviews", exist_ok=True)
-csv_file = f"Reviews/ScottishPower_Playstore_Reviews_{start_date_str}_{period}days.csv"
+csv_file = f"Reviews/UtilityCompany_Playstore_Reviews_{start_date_str}_{period}days.csv"
 new_reviews.to_csv(csv_file, index=False)
 
 print("Reviews saved to ",csv_file)
