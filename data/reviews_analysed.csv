@@ -1,8 +1,21 @@
 review_id,source,author,rating,body,app_version,date_posted,topics,sentiment,insight
+45719a8c13fb674e8c053efdafb3055fd1f0b319027cd7ba026c8dd03f8aee84,PlayStore,Gillian Smart,5,easy and effective,8.37.0,2026-05-15T06:30:40,"[""other""]",positive,User praises the app for its straightforward functionality and effective performance.
+68587290a10d41b031fc809b63a91e71194f50e863b1ec401d224e54a39fc296,PlayStore,joanne fullicks,5,much better than having to go to a top up place when they are not working,8.37.0,2026-05-14T17:16:52,"[""billing""]",positive,Customer appreciates the app's convenience for top-ups compared to visiting physical locations that may have unreliable opening hours.
+3af8ced0f868e6cedc057de2cd07b7a1ca366acff084b7db60a30cda5e577935,PlayStore,john hannan,5,always very happy with Scottish Power.in every way,8.36.1,2026-05-14T14:41:52,"[""other""]",positive,Customer expresses overall satisfaction with Scottish Power across all aspects of their service.
 80969e87fb3c303e0c6d15c673b4c97b9926076c04e370054e1cc6048b5a47cd,PlayStore,rose fitton,5,easy to use.,8.36.1,2026-05-14T04:29:39,"[""other""]",positive,User appreciates the app's intuitive and straightforward interface design.
 9949af2a2f3eea4d2a3058ad9658252dd1d73e68987fc288bb5b8c86071be1c7,PlayStore,Kirk Armitage,5,Brilliant service an help you out when you are struggling with your electricity an gas,8.36.1,2026-05-13T19:44:11,"[""customer_service"", ""account""]",positive,User praises the company's helpful customer service and support during financial hardship.
 00be31c689c968dedce863d496f9f44561dbf3963d1efe54c1e1740f7534d672,PlayStore,Peter,3,not too bad,8.36.1,2026-05-13T09:16:18,"[""other""]",neutral,"User has a lukewarm experience with the app, expressing neither satisfaction nor significant dissatisfaction."
 bead890471dee9be90ccd23c5c73d01366cd7462f024464a5218ea1c89b4f352,PlayStore,Tim White,5,Good App,8.36.1,2026-05-13T05:12:01,"[""other""]",positive,User is satisfied with the overall app experience.
+a9e9a54728b4763877518dbf31f9e0bc1e4866758d022515f4b721a5e1b02d51,AppStore,chris1212121212121,1,"Slow 
+buggy
+The only time you can expect any sort of communication is when they want money. 
+Currently sat trying to pay my bill but can’t log in as I have changed phone 
+I have requested an email to verify who I am at least 10 times now and have not received 1 back 
+
+Very poor 
+
+If people were not so complacent about energy providers Scottish power would go bankrupt!
+Shocking app from a company pulling 1.2 billion in profits",8.36.0,2026-05-13T01:25:51,"[""login"", ""billing"", ""customer_service""]",negative,User is unable to pay their bill due to login issues and has not received verification emails despite multiple requests for customer support.
 c0cd8e8c682835aaf22a8196e093253c7acdba4f5a11aca039c9d3318c762cb5,PlayStore,Eilidh R,3,used to be great before they started asking me to log in again all the time,,2026-05-12T18:34:13,"[""login""]",negative,User is frustrated by frequent re-authentication requirements that have degraded their previously positive experience with the app.
 30166683cad4f86d1d1f33924d07a59966bd57d950ba3791b3f28cda91142f3f,PlayStore,Brendon Sullivan,1,Because mind is no working right and not getting any from can not hold of them rubbish,8.36.1,2026-05-12T15:39:42,"[""customer_service"", ""app_crash""]",negative,User is experiencing app functionality issues and is unable to contact customer support for assistance.
 a4bd1e0536bf17bbecf51f45ac22dfab28a6a136ba71d1dd21683b5c923efa4a,PlayStore,Stephen Dow,4,Very involved and confused. S J Dow,8.36.1,2026-05-12T12:55:46,"[""other""]",neutral,User finds the app's interface confusing and overly complex despite giving a moderate rating.
