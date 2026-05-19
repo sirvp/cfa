@@ -1,4 +1,6 @@
 review_id,source,author,rating,body,app_version,date_posted,topics,sentiment,insight
+b68c94e49158954a6bc9cad3beffc3ddead860a75763dbcc6a98df084b82acaa,PlayStore,Zoe Harries,5,Quick and easy to use. Thank you,8.37.0,2026-05-17T23:41:18,"[""other""]",positive,User appreciates the app's intuitive interface and ease of use.
+066e174140547f9641acfaf9f3d76aa5decd267d7d0eeb2c114fe3ad5b5ac0af,PlayStore,billy farrell,5,"cheaper, easy, an am happy",8.36.1,2026-05-17T18:49:31,"[""billing""]",positive,Customer is satisfied with the app's affordability and user-friendly interface.
 b055c6b64763c0532cb8e1fc415dadc6495b9b8965669703f23f3c917d238cfd,PlayStore,Alan Davies,5,Brilliant app easy to use,8.36.1,2026-05-16T18:54:00,"[""other""]",positive,User praises the app for its intuitive design and ease of use.
 30a41bd5d4798275a0e15b5da8c3ceae7e3211027bb3f1f3417724ff0e37d875,PlayStore,roy edgerton,5,The power to listern Scottich Power,8.36.1,2026-05-16T16:41:42,"[""other""]",positive,User appreciates Scottish Power's ability to listen to customer feedback.
 875dc052c5d4bd289b0fb1f5f3e44bacb908ed97ab5980fa4c4265a4422ac8b1,PlayStore,Alex,1,I am in my 80s and do not understand this why can:t you leave things aloan. gs,8.36.1,2026-05-16T15:56:12,"[""other""]",negative,Elderly user is frustrated by app changes and finds the interface confusing or unnecessarily complicated.
