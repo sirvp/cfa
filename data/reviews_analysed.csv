@@ -1,4 +1,5 @@
 review_id,source,author,rating,body,app_version,date_posted,topics,sentiment,insight
+dbacfe9cd0bd90b6b4f5c8147f66baa45de2b3225520bb30c257f8fc2f550e60,PlayStore,ryan nekadio,5,the service is very good,8.38.0,2026-07-13T07:13:46,"[""customer_service""]",positive,User is satisfied with the overall service quality provided by the energy utility.
 ac0817e7d771dd0141ff6d187f7bc00ec49ad5f95d4e51a8f7c62f44a18c3fa3,PlayStore,Barbara Colquhoun,1,I have tried to top up my balance on the app . there is no place on the app to top up,8.38.0,2026-07-11T19:09:17,"[""billing"", ""other""]",negative,"User cannot find the top-up functionality on the app, making it impossible to add credit to their account."
 7af9a5e61dbfccd1f28b05eeded6bfb810c91241814c98d3b54f4b3979de4b84,PlayStore,chris kennett,1,can not access the app,,2026-07-11T10:39:18,"[""login""]",negative,"User is unable to access the app, likely due to a login or authentication issue."
 ac0ad8f4c8c24f56ce5a9ac1609af70efd44f8b7d9488b81dce59a4d6b2de60f,PlayStore,Aïssatou Diallo,5,best ever,8.39.0,2026-07-11T10:24:52,"[""other""]",positive,User is extremely satisfied with the app overall.
