@@ -1,4 +1,6 @@
 review_id,source,author,rating,body,app_version,date_posted,topics,sentiment,insight
+e8295064ad4d0cc4ffa672fca2370a169142296d159e4d478e086689feded8b8,PlayStore,C Rothwell,5,cracking service 👍,8.42.1,2026-10-25T21:07:28,"[""customer_service""]",positive,User is satisfied with the quality of service provided by the energy utility.
+794548aeaec697516c05a646438eb9d34d09328c762d600714a39250ff9c0064,PlayStore,Antony,1,thieves,8.42.1,2026-10-25T16:06:27,"[""billing""]",negative,User believes they are being overcharged or treated unfairly by the energy company.
 8b0aa9c841f728de88e3ecb3dc4414f870caa874b337bfa7b6089bd12c592841,PlayStore,Rina Rao,5,excellent,8.42.1,2026-10-25T09:54:11,"[""other""]",positive,User is very satisfied with the app overall.
 1cc1beb4aea0539110ffb6f69af2f2114e68a0f0b421dc77f136d260dea84490,PlayStore,Louise Green,5,great rewards and always helpful if you need advice,8.42.1,2026-10-25T05:27:04,"[""account"", ""customer_service""]",positive,User appreciates the rewards program and quality of customer support provided by the utility.
 de69374f3a4ce07a75c068ccd857863b726cb5dd0342f2287cffaa76f3fb479d,PlayStore,Ioan Ford,5,"Great service, great company to be with- Simple!",8.42.1,2026-10-24T13:13:54,"[""customer_service"", ""account""]",positive,User is highly satisfied with the company's overall service quality and simplicity.
