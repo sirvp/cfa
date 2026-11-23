@@ -1,9 +1,36 @@
 review_id,source,author,rating,body,app_version,date_posted,topics,sentiment,insight
+2d0fee4da74138f65cc76c29341e06e88f2bd858756bb6cbda0aa51ee205f3fc,PlayStore,Jennifer Young,5,great easy to use,8.43.0,2026-11-22T11:45:41,"[""other""]",positive,User finds the app intuitive and straightforward to navigate.
+d3e6df8f4194ed8f3ea54fb896132a5d95260aea2042fcb1bec534a58b62b4d7,PlayStore,carmen king,5,great company,8.43.0,2026-11-22T07:08:32,"[""other""]",positive,User expresses general satisfaction with the company.
 5748840a4c37bbaaebc96595e3d80654823637e3c2b507aeb43dae5fac07cb74,PlayStore,Linda Townsenc,5,ease of use,8.43.0,2026-11-21T09:16:24,"[""other""]",positive,User praises the application for its intuitive and straightforward user interface design.
 6e8590fd2ca4bcfa29b1ebe0a2005abe8afd3c9c9d2628c5f139ccb5cde1cc78,PlayStore,Dave Nash,5,excellent quality and service,8.43.0,2026-11-21T08:31:30,"[""customer_service""]",positive,Customer is highly satisfied with the quality of service and overall app experience.
+92c74cc9cb51a47ec70c6a72bf70a23436c65117091065f27437643232decfcc,AppStore,KaptainKox,3,"Gas and electricity in Scotland were in Scottish hands, until the early 90s, when the UK decided to sell it off/privatise it.  Thank you Thatcher/Major 
+And sold to a Spanish company, Iberdrola.  Which is costing Scotland dearly.  
+
+Over the last two years, 2024+25, Scottish Power has paid off dividends to the tune of £1.8 billions.  That’s £530 per customer for the two years (2.5mill for electricity, 1.7 for gas, but assuming half of them have both gas/electricity, then 3.4 million household).  
+
+To sum up:  for the two year period they had a revenue of £13.1 billions, net after tax profit of 20% or £2.7 billion, and 2/3 of that was sent to Spain.",8.43.0,2026-11-21T08:00:22,"[""other""]",negative,"Customer expresses strong criticism about privatization, foreign ownership by Iberdrola, and concerns that substantial profits and dividends are being sent overseas rather than reinvested in Scottish energy infrastructure."
+6694ec1adebf073b0b5de470c30205e56d637b7e4464d39a277f219aa753fc6c,AppStore,Impossible all are taken,1,How do you download this “app” to get the promised points?,8.43.0,2026-11-21T02:58:54,"[""other""]",negative,"User is unable to locate or download the app despite being promised reward points, indicating unclear app availability or poor discoverability."
+c1f031a697772c916f47735f13c36d22eb153b6f5d8429d2173a4f30fd975e49,AppStore,KGhongkong,2,"I’ve found ScottishPower extremely difficult to deal with, particularly when trying to arrange a solar export tariff.
+
+I have a solar system installed at home and have submitted all the documentation requested, but I still haven’t managed to get an export tariff set up. The website is unclear about what you need to do, and even after following the guidance I eventually found, I’ve struggled to make any progress.
+
+Trying to speak to someone is another frustration. Calls seem to lead to an AI assistant, and I’ve found it very difficult to reach a real person who can help.
+
+If you already have solar panels and batteries, or are considering installing them, I would strongly suggest comparing other suppliers and their export offers before choosing ScottishPower.
+
+Based on my experience, I would not recommend them.",8.43.0,2026-11-20T22:46:15,"[""customer_service"", ""account"", ""other""]",negative,"Customer unable to set up solar export tariff due to unclear website guidance and difficulty reaching human support, with calls routed to AI assistants."
 2550f08b67c6e63696d1b22e3e3b1a3f84c618397301b404655c577a7d818c1a,PlayStore,Margaret Gozna,4,easy to navigate.,8.43.0,2026-11-20T16:08:58,"[""other""]",positive,User appreciates the app's intuitive and user-friendly interface design.
 5cfac3777d40671d46ed8d9c2555e5d3543ea70ac4572c7e6c1eef8f33d1fa18,PlayStore,EILEEN WASS,2,not available on Chrome,8.43.0,2026-11-20T15:35:31,"[""other""]",negative,"The app is not compatible with Chrome browser, limiting accessibility for users who prefer this platform."
 bd79560d47fcef271b956dd34f305446a340a1bb87bbeb4b4a627c07d580886a,PlayStore,Hazel Ainsley,5,very well,8.43.0,2026-11-20T10:32:45,"[""other""]",positive,User expresses general satisfaction with the app.
+585a9280f2129f2eb2f8407c6b121154c52d902d805b86f8a0785c202f98cb4c,AppStore,Goose1928,1,"The app worked perfectly well until late October 2026. Since then, it has become increasingly frustrating to use.
+
+It now seems incapable of accepting meter readings without questioning them, even when they are perfectly reasonable, and it suggests I upgrade to a smart meter (I already have one). Worse still, my account balance no longer updates in the app, making it difficult to know how much I actually owe or whether my account is up to date.
+
+Looking at other recent reviews, it appears I’m not the only person experiencing these problems.
+
+It’s disappointing that an app which previously worked well has become so unreliable. ScottishPower really needs to address these issues and restore the basic functionality that customers had before.
+
+I’m told by Scottish Power that my bill will be generated but they have to do it, and that I should see my balance in the app but I’ll wait to see if it returns to what was an easy to use app.",8.43.0,2026-11-20T10:30:10,"[""billing"", ""account"", ""smart_meter"", ""other""]",negative,"App functionality has deteriorated since late October 2026, with meter reading validation issues and missing account balance updates preventing users from tracking their bills accurately."
 c4a6d2546890b3d89e1a3d596335d68f00d2ebb438de71eac6a812ed090c5d0c,AppStore,Roy Stewart Smiths Dock,1,Absolute daylight robbery how can people on low fixed income heat their homes you robbing thieving g###,8.43.0,2026-11-20T02:00:31,"[""billing""]",negative,Customer expresses severe frustration about high energy costs and their inability to afford heating on a fixed low income.
 3ecbc2d7cd8027b2f97fff01cecb34fc9c00a4c40d92d16bb386a7b302d71f17,PlayStore,Alan Kirk,1,all i want do is pay my bill i'm not interested in your app,8.43.0,2026-11-19T21:22:58,"[""billing""]",negative,User is frustrated with the app's complexity and simply wants a straightforward way to pay their bill.
 d73de6caeaec9d5990eabfafb5c97ad035dd5ae503e26ba7324289dfdb88416d,PlayStore,eee eee,1,"app is completely broken, buttons dont work and customer service is awful",8.43.0,2026-11-19T21:15:41,"[""app_crash"", ""customer_service""]",negative,User is experiencing non-functional app buttons and is dissatisfied with the quality of customer support received.
